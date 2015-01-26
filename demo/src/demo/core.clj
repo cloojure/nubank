@@ -18,15 +18,15 @@
   [ (s/one Node "n1")
     (s/one Node "n2") ] )
 
-(s/defn parse-edge :- Edge
-  "Parse a string of the form 'n1 n2', returning a vector like [n1 n2]" 
-  [line-str :- s/Str]
-  (mapv coolp/parse-int (re-seq #"\d+" line-str)))
-
 (def EdgesMap 
   "A map composed of entries like [n0 #{n1 n2 n3...}], such that an edge exists that 
   connects n0 to each of n1, n2, n3 ..."
   { Node #{Node} } )
+
+(s/defn parse-edge :- Edge
+  "Parse a string of the form 'n1 n2', returning a vector like [n1 n2]" 
+  [line-str :- s/Str]
+  (mapv coolp/parse-int (re-seq #"\d+" line-str)))
 
 (s/defn accum-edges :- EdgesMap
   "Update an EdgesMap with a new edge."
