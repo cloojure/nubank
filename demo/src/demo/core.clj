@@ -52,11 +52,15 @@
   [[s/Any]] )
 
 (s/defn newArray
-  "Return a new Array of size=[nrows ncols] initialized to a constant."
-  [nrows ncols init-val]
-  (into [] 
-    (for [ii (range nrows)]
-      (into [] (repeat ncols init-val)))))
+  "([nrows ncols] [nrows ncols init-val])
+  Return a new Array of size=[nrows ncols] initialized to zero (or init-val if supplied)"
+  ( [nrows ncols]
+      (newArray nrows ncols 0))
+  ( [nrows ncols init-val]
+    (into [] 
+      (for [ii (range nrows)]
+        (into [] (repeat ncols init-val)))))
+  )
 
 (s/defn num-rows :- s/Int
   "Returns the number of rows of an Array."
@@ -67,6 +71,25 @@
   "Returns the number of cols of an Array."
   [arg :- Array]
   (count (arg 0)))
+
+(s/defn arrayPut :- Array
+  "Puts a value into an Array element, returning the updated Array."
+  [ -array  :- Array
+    ii      :- s/Int
+    jj      :- s/Int
+    newVal  :- s/Any]
+  {:pre [ (<= 0 ii) (< ii (num-rows -array))
+          (<= 0 jj) (< jj (num-cols -array)) ] }
+  (assoc-in -array [ii jj] newVal))
+
+(s/defn arrayGet :- s/Any
+  "Gets an Array element"
+  [ -array  :- Array
+    ii      :- s/Int
+    jj      :- s/Int ]
+  {:pre [ (<= 0 ii) (< ii (num-rows -array))
+          (<= 0 jj) (< jj (num-cols -array)) ] }
+  (get-in -array [ii jj] newVal))
 
 
 (s/defn parse-edge :- Edge

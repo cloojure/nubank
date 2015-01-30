@@ -58,6 +58,16 @@
     (is (every?  #(= :a %) a34f))
     (is (every?  #(= :a %)  (for [ii (range (num-rows a34))
                                   jj (range (num-cols a34)) ]
-                              (get-in a34 [ii jj] ))))
-  )
+                              (arrayGet a34 ii jj)))))
+
+  (let [a34     (newArray 3 4) 
+        a34f    (flatten a34) ]
+    (is (= 3    (count  a34)     (num-rows a34)))
+    (is (= 4    (count (a34 0))  (num-cols a34)))
+    (is (= 12   (count  a34f)))
+    (is (every?  #(= 0 %) a34f))
+    (is (every?  #(= 0 %)   (for [ii (range (num-rows a34))
+                                  jj (range (num-cols a34)) ]
+                              (arrayGet a34 ii jj)))))
+
 )
