@@ -23,6 +23,7 @@
   connects n0 to each of n1, n2, n3 ..."
   { Node #{Node} } )
 
+
 (s/defn parse-edge :- Edge
   "Parse a string of the form 'n1 n2', returning a vector like [n1 n2]" 
   [line-str :- s/Str]
@@ -33,9 +34,9 @@
   [ edges-map       :- EdgesMap 
     edge            :- Edge ]
   (let [ [n1 n2]  edge ]
-    (as-> edges-map accum
-      (update-in accum [n1]  (fnil conj #{})  n2)
-      (update-in accum [n2]  (fnil conj #{})  n1))))
+    (as-> edges-map result
+      (update-in result [n1]  (fnil conj (sorted-set))  n2)
+      (update-in result [n2]  (fnil conj (sorted-set))  n1))))
 
 (defn -main []
   (let [
@@ -43,7 +44,7 @@
     edges           (mapv parse-edge edge-lines)
     -- (s/validate [Edge] edges)
     -- (spyx edges)
-    edges-map       (reduce accum-edges {} edges)
+    edges-map       (reduce accum-edges (sorted-map) edges)
   ]
     (spyx edges-map)
   ))
