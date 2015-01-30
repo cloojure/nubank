@@ -9,29 +9,6 @@
 
 (s/set-fn-validation! true)
 
-(defn is-array? [x] 
-  (-> x class .isArray))
-
-(defn disp-array [-array]
-  (let [num-rows    (count -array)
-        num-cols    (count (aget -array 0)) 
-  ]
-    (dotimes [ii num-rows]
-      (do
-        (dotimes [jj num-cols]
-          (print (format "%4d" (aget -array ii jj))))
-        (newline)))))
-
-(defn disp-matrix [-matrix]
-  (let [num-rows    (count -matrix)
-        num-cols    (count (-matrix 0)) 
-  ]
-    (dotimes [ii num-rows]
-      (do
-        (dotimes [jj num-cols]
-          (print (format "%4d" ((-matrix ii) jj))))
-        (newline)))))
-
 
 (def edges-filename "edges.txt")
 
@@ -72,7 +49,7 @@
   [arg :- Array]
   (count (arg 0)))
 
-(s/defn arrayPut :- Array
+(s/defn array-set :- Array
   "Puts a value into an Array element, returning the updated Array."
   [ -array  :- Array
     ii      :- s/Int
@@ -82,15 +59,20 @@
           (<= 0 jj) (< jj (num-cols -array)) ] }
   (assoc-in -array [ii jj] newVal))
 
-(s/defn arrayGet :- s/Any
+(s/defn array-get :- s/Any
   "Gets an Array element"
   [ -array  :- Array
     ii      :- s/Int
     jj      :- s/Int ]
   {:pre [ (<= 0 ii) (< ii (num-rows -array))
           (<= 0 jj) (< jj (num-cols -array)) ] }
-  (get-in -array [ii jj] newVal))
+  (get-in -array [ii jj]))
 
+(defn disp-array [-array]
+  (dotimes [ii (num-rows -array)]
+    (dotimes [jj (num-cols -array)]
+      (print (format "%4s" (array-get -array ii jj))))
+    (newline)))
 
 (s/defn parse-edge :- Edge
   "Parse a string of the form 'n1 n2', returning a vector like [n1 n2]" 
@@ -149,12 +131,12 @@
     (spyx @work)
     (println "rows" (count @work))
     (println "cols" (count (@work 0)))
-    (disp-matrix @work)
+    (disp-array @work)
     (newline)
     (dotimes [ii num-rows]
       (dotimes [jj num-cols]
         (swap! work assoc-in [ii jj]  (+ (* 10 ii) jj))))
-    (disp-matrix @work)
+    (disp-array @work)
     (println "done")
   )
 
@@ -186,3 +168,17 @@
   )
 )
     
+; 
+; (defn is-array? [x] 
+;   (-> x class .isArray))
+; 
+; (defn disp-array [-array]
+;   (let [num-rows    (count -array)
+;         num-cols    (count (aget -array 0)) 
+;   ]
+;     (dotimes [ii num-rows]
+;       (do
+;         (dotimes [jj num-cols]
+;           (print (format "%4d" (aget -array ii jj))))
+;         (newline)))))
+; 

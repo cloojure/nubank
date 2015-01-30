@@ -58,7 +58,7 @@
     (is (every?  #(= :a %) a34f))
     (is (every?  #(= :a %)  (for [ii (range (num-rows a34))
                                   jj (range (num-cols a34)) ]
-                              (arrayGet a34 ii jj)))))
+                              (array-get a34 ii jj)))))
 
   (let [a34     (newArray 3 4) 
         a34f    (flatten a34) ]
@@ -68,6 +68,17 @@
     (is (every?  #(= 0 %) a34f))
     (is (every?  #(= 0 %)   (for [ii (range (num-rows a34))
                                   jj (range (num-cols a34)) ]
-                              (arrayGet a34 ii jj)))))
+                              (array-get a34 ii jj)))))
 
+  (let [a34     (atom (newArray 3 4)) ]
+    (dotimes [ii 3]
+      (dotimes [jj 4]
+        (swap! a34 array-set ii jj (str ii jj))))
+    (newline)
+    (println "a34:")
+    (disp-array @a34) 
+    (is (=  (flatten @a34)
+            (for [ii (range 3)
+                  jj (range 4) ]
+              (str ii jj)))))
 )
