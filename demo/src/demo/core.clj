@@ -9,6 +9,19 @@
 
 (s/set-fn-validation! true)
 
+(defn is-array? [x] 
+  (-> x class .isArray))
+
+(defn disp [-array]
+  (let [num-rows    (count -array)
+        num-cols    (count (aget -array 0)) 
+  ]
+    (dotimes [ii num-rows]
+      (do
+        (dotimes [jj num-cols]
+          (print (format "%4d" (aget -array ii jj))))
+        (newline)))))
+
 (def edges-filename "edges.txt")
 
 (def Node s/Int)
@@ -66,7 +79,23 @@
     connected1 ))
 
 (defn -main []
+  (println "start")
   (let [
+    num-rows    3
+    num-cols    4
+    work        (make-array Long/TYPE num-rows num-cols)
+  ]
+    (println "rows" (count work))
+    (println "cols" (count (aget work 0)))
+    (newline)
+    (dotimes [ii num-rows]
+      (dotimes [jj num-cols]
+        (aset work ii jj  (+ (* 10 ii) jj))))
+    (disp work)
+    (println "done")
+  )
+
+  #_(let [
     edge-lines      (str/split-lines (slurp edges-filename))
     edges           (mapv parse-edge edge-lines)
     -- (s/validate [Edge] edges)
@@ -75,5 +104,6 @@
   ]
     (spyx graph)
     (spyx (all-nodes graph))
-  ))
+  )
+)
     
