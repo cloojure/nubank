@@ -59,7 +59,7 @@
     n2      :- Node ]
   {:pre [ (contains? graph n1) 
           (contains? graph n2) ] }
-  (contains? (neighbors n1) n2))
+  (contains? (neighbors graph n1) n2))
 
 (defn -main []
   (let [
