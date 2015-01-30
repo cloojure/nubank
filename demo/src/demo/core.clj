@@ -12,7 +12,7 @@
 (defn is-array? [x] 
   (-> x class .isArray))
 
-(defn disp [-array]
+(defn disp-array [-array]
   (let [num-rows    (count -array)
         num-cols    (count (aget -array 0)) 
   ]
@@ -20,6 +20,16 @@
       (do
         (dotimes [jj num-cols]
           (print (format "%4d" (aget -array ii jj))))
+        (newline)))))
+
+(defn disp-matrix [-matrix]
+  (let [num-rows    (count -matrix)
+        num-cols    (count (-matrix 0)) 
+  ]
+    (dotimes [ii num-rows]
+      (do
+        (dotimes [jj num-cols]
+          (print (format "%4d" ((-matrix ii) jj))))
         (newline)))))
 
 (def edges-filename "edges.txt")
@@ -78,20 +88,44 @@
     (assert (= connected1 connected2))
     connected1 ))
 
+(defn make-matrix 
+  [num-rows num-cols]
+  (into []
+    (for [ii (range num-rows)]
+      (vec (repeat num-cols 0)))))
+
 (defn -main []
-  (println "start")
   (let [
+    num-rows    3
+    num-cols    4
+    work        (atom (make-matrix num-rows num-cols))
+  ]
+    (println "start")
+    (spyx @work)
+    (println "rows" (count @work))
+    (println "cols" (count (@work 0)))
+    (disp-matrix @work)
+    (newline)
+    (dotimes [ii num-rows]
+      (dotimes [jj num-cols]
+        (swap! work assoc-in [ii jj]  (+ (* 10 ii) jj))))
+    (disp-matrix @work)
+    (println "done")
+  )
+
+  #_(let [
     num-rows    3
     num-cols    4
     work        (make-array Long/TYPE num-rows num-cols)
   ]
+    (println "start")
     (println "rows" (count work))
     (println "cols" (count (aget work 0)))
     (newline)
     (dotimes [ii num-rows]
       (dotimes [jj num-cols]
         (aset work ii jj  (+ (* 10 ii) jj))))
-    (disp work)
+    (disp-array work)
     (println "done")
   )
 
