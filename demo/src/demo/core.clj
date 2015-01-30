@@ -46,20 +46,24 @@
       [ (keys graph)  (map seq (vals graph)) ] )))
 
 (s/defn neighbors :- #{Node}
-  "Returns a set of the neighbors of a node"
+  "Returns the set of the neighbors for a node"
   [ graph   :- Graph
     node    :- Node ]
   {:pre [ (contains? graph node) ] }
   (graph node))
 
 (s/defn connected? :- s/Bool
-  "Returns true if two nodes are connected."
+  "Returns true if two nodes are connected by an edge."
   [ graph   :- Graph
     n1      :- Node
     n2      :- Node ]
   {:pre [ (contains? graph n1) 
           (contains? graph n2) ] }
-  (contains? (neighbors graph n1) n2))
+  (let [connected1   (contains? (neighbors graph n1) n2)
+        connected2   (contains? (neighbors graph n2) n1) 
+  ]
+    (assert (= connected1 connected2))
+    connected1 ))
 
 (defn -main []
   (let [
