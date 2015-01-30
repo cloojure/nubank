@@ -18,7 +18,7 @@
   [ (s/one Node "n1")
     (s/one Node "n2") ] )
 
-(def EdgesMap 
+(def Graph 
   "A map composed of entries like [n0 #{n1 n2 n3...}], such that an edge exists that 
   connects n0 to each of n1, n2, n3 ..."
   { Node #{Node} } )
@@ -29,14 +29,37 @@
   [line-str :- s/Str]
   (mapv coolp/parse-int (re-seq #"\d+" line-str)))
 
-(s/defn accum-edges :- EdgesMap
-  "Update an EdgesMap with a new edge."
-  [ edges-map       :- EdgesMap 
+(s/defn accum-edges :- Graph
+  "Update an Graph with a new edge."
+  [ graph       :- Graph 
     edge            :- Edge ]
   (let [ [n1 n2]  edge ]
-    (as-> edges-map result
+    (as-> graph result
       (update-in result [n1]  (fnil conj (sorted-set))  n2)
       (update-in result [n2]  (fnil conj (sorted-set))  n1))))
+
+(s/defn all-nodes :- #{Node}
+  "Returns a set of all nodes in the graph"
+  [graph :- Graph]
+  (into (sorted-set)
+    (flatten
+      [ (keys graph)  (map seq (vals graph)) ] )))
+
+(s/defn neighbors :- #{Node}
+  "Returns a set of the neighbors of a node"
+  [ graph   :- Graph
+    node    :- Node ]
+  {:pre [ (contains? graph node) ] }
+  (graph node))
+
+(s/defn connected? :- s/Bool
+  "Returns true if two nodes are connected."
+  [ graph   :- Graph
+    n1      :- Node
+    n2      :- Node ]
+  {:pre [ (contains? graph n1) 
+          (contains? graph n2) ] }
+  (contains? (neighbors n1) n2))
 
 (defn -main []
   (let [
@@ -44,8 +67,9 @@
     edges           (mapv parse-edge edge-lines)
     -- (s/validate [Edge] edges)
     -- (spyx edges)
-    edges-map       (reduce accum-edges (sorted-map) edges)
+    graph           (reduce accum-edges (sorted-map) edges)
   ]
-    (spyx edges-map)
+    (spyx graph)
+    (spyx (all-nodes graph))
   ))
     

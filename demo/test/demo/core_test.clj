@@ -32,3 +32,19 @@
                 {} 
                 [[1 2] [2 3] [2 4] [3 4] [4 5]] )))
 )
+
+(deftest symmetry-t
+  (let [
+    graph    (reduce accum-edges 
+                {} 
+                [[1 2] [2 3] [2 4] [3 4] [4 5]] )
+    nodes    (all-nodes graph)
+  ]
+    (is (= nodes #{1 2 3 4 5}))
+    (doseq [node nodes]
+      (do
+        (is (contains? graph node))
+        (doseq [nbr (neighbors graph node)]
+          (is (connected? graph node nbr))
+          (is (connected? graph nbr node))
+        )))))
