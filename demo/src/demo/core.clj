@@ -32,6 +32,7 @@
           (print (format "%4d" ((-matrix ii) jj))))
         (newline)))))
 
+
 (def edges-filename "edges.txt")
 
 (def Node s/Int)
@@ -45,6 +46,27 @@
   "A map composed of entries like [n0 #{n1 n2 n3...}], such that an edge exists that 
   connects n0 to each of n1, n2, n3 ..."
   { Node #{Node} } )
+
+(def Array
+  "A 2-D array of values (an array of arrays)."
+  [[s/Any]] )
+
+(s/defn newArray
+  "Return a new Array of size=[nrows ncols] initialized to a constant."
+  [nrows ncols init-val]
+  (into [] 
+    (for [ii (range nrows)]
+      (into [] (repeat ncols init-val)))))
+
+(s/defn num-rows :- s/Int
+  "Returns the number of rows of an Array."
+  [arg :- Array]
+  (count arg))
+
+(s/defn num-cols :- s/Int
+  "Returns the number of cols of an Array."
+  [arg :- Array]
+  (count (arg 0)))
 
 
 (s/defn parse-edge :- Edge
