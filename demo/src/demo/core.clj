@@ -2,6 +2,7 @@
   (:require
     [clojure.string     :as str]
     [cooljure.parse     :as coolp]
+    [demo.array         :as array]
     [schema.core        :as s]
     [schema.test        :as s-tst] )
   (:use [cooljure.core] )
@@ -27,52 +28,6 @@
 (def Array
   "A 2-D array of values (an array of arrays)."
   [[s/Any]] )
-
-(s/defn newArray
-  "([nrows ncols] [nrows ncols init-val])
-  Return a new Array of size=[nrows ncols] initialized to zero (or init-val if supplied)"
-  ( [nrows ncols]
-      (newArray nrows ncols 0))
-  ( [nrows ncols init-val]
-    (into [] 
-      (for [ii (range nrows)]
-        (into [] (repeat ncols init-val)))))
-  )
-
-(s/defn num-rows :- s/Int
-  "Returns the number of rows of an Array."
-  [arg :- Array]
-  (count arg))
-
-(s/defn num-cols :- s/Int
-  "Returns the number of cols of an Array."
-  [arg :- Array]
-  (count (arg 0)))
-
-(s/defn array-set :- Array
-  "Puts a value into an Array element, returning the updated Array."
-  [ -array  :- Array
-    ii      :- s/Int
-    jj      :- s/Int
-    newVal  :- s/Any]
-  {:pre [ (<= 0 ii) (< ii (num-rows -array))
-          (<= 0 jj) (< jj (num-cols -array)) ] }
-  (assoc-in -array [ii jj] newVal))
-
-(s/defn array-get :- s/Any
-  "Gets an Array element"
-  [ -array  :- Array
-    ii      :- s/Int
-    jj      :- s/Int ]
-  {:pre [ (<= 0 ii) (< ii (num-rows -array))
-          (<= 0 jj) (< jj (num-cols -array)) ] }
-  (get-in -array [ii jj]))
-
-(defn disp-array [-array]
-  (dotimes [ii (num-rows -array)]
-    (dotimes [jj (num-cols -array)]
-      (print (format "%4s" (array-get -array ii jj))))
-    (newline)))
 
 (s/defn parse-edge :- Edge
   "Parse a string of the form 'n1 n2', returning a vector like [n1 n2]" 
@@ -115,28 +70,22 @@
     (assert (= connected1 connected2))
     connected1 ))
 
-(defn make-matrix 
-  [num-rows num-cols]
-  (into []
-    (for [ii (range num-rows)]
-      (vec (repeat num-cols 0)))))
-
 (defn -main []
   (let [
     num-rows    3
     num-cols    4
-    work        (atom (make-matrix num-rows num-cols))
+    work        (atom (array/create num-rows num-cols))
   ]
     (println "start")
     (spyx @work)
     (println "rows" (count @work))
     (println "cols" (count (@work 0)))
-    (disp-array @work)
+    (array/disp @work)
     (newline)
     (dotimes [ii num-rows]
       (dotimes [jj num-cols]
-        (swap! work assoc-in [ii jj]  (+ (* 10 ii) jj))))
-    (disp-array @work)
+        (swap! work array/set-elem ii jj (+ (* 10 ii) jj))))
+    (array/disp @work)
     (println "done")
   )
 
