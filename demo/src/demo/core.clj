@@ -76,10 +76,7 @@
     num-cols    4
     work        (atom (array/create num-rows num-cols))
   ]
-    (println "start")
-    (spyx @work)
-    (println "rows" (count @work))
-    (println "cols" (count (@work 0)))
+    (println "rows cols: " (array/num-rows @work) (array/num-cols @work))
     (array/disp @work)
     (newline)
     (dotimes [ii num-rows]
@@ -89,45 +86,5 @@
     (println "done")
   )
 
-  #_(let [
-    num-rows    3
-    num-cols    4
-    work        (make-array Long/TYPE num-rows num-cols)
-  ]
-    (println "start")
-    (println "rows" (count work))
-    (println "cols" (count (aget work 0)))
-    (newline)
-    (dotimes [ii num-rows]
-      (dotimes [jj num-cols]
-        (aset work ii jj  (+ (* 10 ii) jj))))
-    (disp-array work)
-    (println "done")
-  )
-
-  #_(let [
-    edge-lines      (str/split-lines (slurp edges-filename))
-    edges           (mapv parse-edge edge-lines)
-    -- (s/validate [Edge] edges)
-    -- (spyx edges)
-    graph           (reduce accum-edges (sorted-map) edges)
-  ]
-    (spyx graph)
-    (spyx (all-nodes graph))
-  )
 )
     
-; 
-; (defn is-array? [x] 
-;   (-> x class .isArray))
-; 
-; (defn disp-array [-array]
-;   (let [num-rows    (count -array)
-;         num-cols    (count (aget -array 0)) 
-;   ]
-;     (dotimes [ii num-rows]
-;       (do
-;         (dotimes [jj num-cols]
-;           (print (format "%4d" (aget -array ii jj))))
-;         (newline)))))
-; 
