@@ -15,8 +15,8 @@
     (is (= 4    (count (a34 0))  (array/num-cols a34)))
     (is (= 12   (count  a34f)))
     (is (every?  #(= :a %) a34f))
-    (is (every?  #(= :a %)  (for [ii (range (array/num-rows a34))
-                                  jj (range (array/num-cols a34)) ]
+    (is (every?  #(= :a %)  (forv [ii (range (array/num-rows a34))
+                                   jj (range (array/num-cols a34)) ]
                               (array/get-elem a34 ii jj)))))
 
   (let [a34     (array/create 3 4) 
@@ -25,8 +25,8 @@
     (is (= 4    (count (a34 0))  (array/num-cols a34)))
     (is (= 12   (count  a34f)))
     (is (every?  #(= 0 %) a34f))
-    (is (every?  #(= 0 %)   (for [ii (range (array/num-rows a34))
-                                  jj (range (array/num-cols a34)) ]
+    (is (every?  #(= 0 %)   (forv [ii (range (array/num-rows a34))
+                                   jj (range (array/num-cols a34)) ]
                               (array/get-elem a34 ii jj)))))
 
   (let [a34     (atom (array/create 3 4)) ]

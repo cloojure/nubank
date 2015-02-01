@@ -23,10 +23,8 @@
   ( [nrows      :- s/Int
      ncols      :- s/Int
      init-val   :- s/Any]
-    (into [] 
-      (for [ii (range nrows)]
-        (into [] (repeat ncols init-val)))))
-  )
+    (forv [ii (range nrows)]
+      (into [] (repeat ncols init-val)))))
 
 (s/defn num-rows :- s/Int
   "Returns the number of rows of an Array."
