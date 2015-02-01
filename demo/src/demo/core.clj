@@ -25,10 +25,6 @@
   connects n0 to each of n1, n2, n3 ..."
   { Node #{Node} } )
 
-(def Array
-  "A 2-D array of values (an array of arrays)."
-  [[s/Any]] )
-
 (s/defn parse-edge :- Edge
   "Parse a string of the form 'n1 n2', returning a vector like [n1 n2]" 
   [line-str :- s/Str]
@@ -36,8 +32,8 @@
 
 (s/defn accum-edges :- Graph
   "Update an Graph with a new edge."
-  [ graph       :- Graph 
-    edge            :- Edge ]
+  [ graph   :- Graph 
+    edge    :- Edge ]
   (let [ [n1 n2]  edge ]
     (as-> graph result
       (update-in result [n1]  (fnil conj (sorted-set))  n2)

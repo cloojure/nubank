@@ -30,13 +30,13 @@
 
 (s/defn num-rows :- s/Int
   "Returns the number of rows of an Array."
-  [arg :- Array]
-  (count arg))
+  [-array :- Array]
+  (count -array))
 
 (s/defn num-cols :- s/Int
   "Returns the number of cols of an Array."
-  [arg :- Array]
-  (count (arg 0)))
+  [-array :- Array]
+  (count (-array 0)))
 
 (s/defn set-elem :- Array
   "Puts a value into an Array element, returning the updated Array."
