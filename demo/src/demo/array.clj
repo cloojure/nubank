@@ -78,17 +78,6 @@
 ;    (println "done")
 ;  )
 ;
-;  (let [
-;    edge-lines      (str/split-lines (slurp edges-filename))
-;    edges           (mapv parse-edge edge-lines)
-;    -- (s/validate [Edge] edges)
-;    -- (spyx edges)
-;    graph           (reduce accum-edges (sorted-map) edges)
-;  ]
-;    (spyx graph)
-;    (spyx (all-nodes graph))
-;  )
-;
 ; (defn is-array? [x] 
 ;   (-> x class .isArray))
 ; 
