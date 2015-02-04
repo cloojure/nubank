@@ -4,8 +4,9 @@
     [cooljure.parse     :as coolp]
     [demo.array         :as array]
     [demo.darr          :as darr]
-    [schema.core        :as s]
-    [schema.test        :as s-tst] )
+    [hiphip.array       :as harr]
+    [hiphip.double      :as hd]
+    [schema.core        :as s] )
   (:use [cooljure.core] )
   (:gen-class))
 
@@ -31,14 +32,26 @@
   [line-str :- s/Str]
   (mapv coolp/parse-int (re-seq #"\d+" line-str)))
 
+(s/defn num-edges :- s/Int
+  "Returns the number of (symmetric) edges in the graph"
+  [graph :- Graph]
+  (let [edges-dest  (vals graph)
+        dest-sum    (reduce + 0 (mapv count edges-dest))
+        result      (/ dest-sum 2)
+  ]
+    result ))
+
 (s/defn accum-edges :- Graph
   "Update an Graph with a new edge symmetrically n1->n2 and n2->n1"
   [ graph   :- Graph 
     edge    :- Edge ]
-  (let [ [n1 n2]  edge ]
-    (as-> graph result
-      (update-in result [n1]  (fnil conj (sorted-set))  n2)
-      (update-in result [n2]  (fnil conj (sorted-set))  n1))))
+  (let [ [n1 n2]    edge 
+        result      (as-> graph result
+                      (update-in result [n1]  (fnil conj (sorted-set))  n2)
+                      (update-in result [n2]  (fnil conj (sorted-set))  n1))
+  ]
+    result
+  ))
 
 (s/defn all-nodes :- #{Node}
   "Returns a set of all nodes in the graph"
@@ -75,16 +88,18 @@
     edges           (mapv parse-edge edge-lines)
   ]
     (s/validate [Edge] edges)
-;   (when *spy* (spyx edges))
     edges ))
 
 (s/defn load-graph  :- Graph
   [text :- s/Str]
-  (let [edges   (load-edges text)
-        graph   (reduce accum-edges (sorted-map) edges)
+  (let [edges       (load-edges text)
+        graph       (reduce accum-edges (sorted-map) edges)
+        edge-sets   (mapv #(into (sorted-set) %) edges)
+        edge-freqs  (frequencies edge-sets)
+        edge-dups   (filter #(< 1 (val %)) edge-freqs)
   ]
-;   (when *spy* (spyx graph))
-;   (when *spy* (spyx (all-nodes graph)))
+    (println "Duplicate Edges:  Count =" (count edge-dups))
+    (println "   Values =" edge-dups)
     graph))
 
 (s/defn shortest-path-0 :- array/Array
@@ -122,13 +137,21 @@
   (println "shortest-path: enter")
   (let [N           (count (all-nodes graph))
         -- (assert (= N (count graph)))
-        dist        (darr/create N N 1e99)
+        dist        
+            (do
+              (print "create: ") (time
+              (darr/create N N 1e99)
+            ))
   ]
+(print "diag: ") (time
     (doseq [ ii (keys graph) ]
       (darr/set-elem dist ii ii 0))
+)
+(print "nbrs ") (time
     (doseq [ ii (keys graph)
              jj (neighbors graph ii) ]
       (darr/set-elem dist ii jj 1))
+)
 
     (dotimes [kk N]
       (when (= 0 (rem kk 50)) (print \newline (format "kk: %5d" kk)))
@@ -168,8 +191,11 @@
             *show-status* true ]
     (let [
       text      (slurp edges-filename)
+      -- (println "lines read:" (count (str/split-lines text)))
       graph     (load-graph text)
-      -- (println "graph nodes" (count graph))
+      -- (println "graph nodes:" (count graph)
+                  "   edges:" (/ (reduce + (mapv count (vals graph)))
+                                 2 ))
 
       spath     (shortest-path graph)
       -- (when false

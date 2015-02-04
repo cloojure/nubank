@@ -60,8 +60,8 @@
           init-val  (double init-val) 
     ]
       (dotimes [ii nrows]
-        (dotimes [jj ncols]
-          (let [^doubles darr  (aget ^objects result ii) ]
+        (let [^doubles darr  (aget ^objects result ii) ]
+          (dotimes [jj ncols]
             (aset darr jj init-val))))
       result
     )
