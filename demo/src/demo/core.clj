@@ -11,6 +11,7 @@
 (s/set-fn-validation! true)
 
 (def ^:dynamic *spy* false)
+(def ^:dynamic *show-status* false)
 
 (def Node s/Int)
 
@@ -73,7 +74,7 @@
     edges           (mapv parse-edge edge-lines)
   ]
     (s/validate [Edge] edges)
-    (when *spy* (spyx edges))
+;   (when *spy* (spyx edges))
     edges ))
 
 (s/defn load-graph  :- Graph
@@ -81,8 +82,8 @@
   (let [edges   (load-edges text)
         graph   (reduce accum-edges (sorted-map) edges)
   ]
-    (when *spy* (spyx graph))
-    (when *spy* (spyx (all-nodes graph)))
+;   (when *spy* (spyx graph))
+;   (when *spy* (spyx (all-nodes graph)))
     graph))
 
 (s/defn shortest-path :- array/Array
@@ -97,9 +98,12 @@
     (doseq [ ii (keys graph)
              jj (neighbors graph ii) ]
       (swap! dist array/set-elem ii jj 1))
+    (println "shortest-path: init done")
 
     (dotimes [kk N]
+      (print \newline "kk:" kk "  " )
       (dotimes [ii N]
+        (print \i) (flush)
         (dotimes [jj N]
           (let [dist-sum    (+ (array/get-elem @dist ii kk)
                                (array/get-elem @dist kk jj))
@@ -108,7 +112,8 @@
           (when (< dist-sum dist-ij)
             (swap! dist array/set-elem ii jj dist-sum)))))
     )
-    (assert (array/symmetric? @dist))
+    (when *show-status* (newline))
+;   (assert (array/symmetric? @dist))
     @dist
   ))
 
@@ -122,23 +127,26 @@
     closeness ))
 
 (def edges-filename "edges.txt")
+(def edges-filename "edges-full.txt")
 
 (defn -main []
-  (binding [*spy* true]
+  (binding [*spy* false
+            *show-status* true ]
     (let [
       text      (slurp edges-filename)
       graph     (load-graph text)
+      -- (println "graph nodes" (count graph))
       spath     (shortest-path graph)
       -- (do (println "spath:") (array/disp spath))
       cness     (closeness spath)
       -- (newline)
-      -- (spyx cness)
+      -- (spyx (take 44 cness))
       cness     (sort-by :closeness > 
                   (mapv #(hash-map :closeness %1  :node %2)  
                         cness 
                         (range (count cness))))
     ]
       (newline)
-      (spyx cness)
+      (spyx (take 44 cness))
     )))
     
