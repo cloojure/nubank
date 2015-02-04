@@ -49,3 +49,14 @@
           (is (connected? graph nbr node))
         )))))
 
+(deftest shortest-graph-t
+  (let [lines  "0 1
+                1 2
+                2 0
+                0 3
+                3 4
+                4 5
+                5 3"
+  ]
+  ))
+

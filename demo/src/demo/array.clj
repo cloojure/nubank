@@ -36,6 +36,7 @@
   [-array :- Array]
   (count (-array 0)))
 
+; #todo -> elem-set/elem-get
 (s/defn set-elem :- Array
   "Puts a value into an Array element, returning the updated Array."
   [ -array  :- Array
@@ -58,7 +59,7 @@
 (defn disp [-array]
   (dotimes [ii (num-rows -array)]
     (dotimes [jj (num-cols -array)]
-      (print (format "%4s" (get-elem -array ii jj))))
+      (print (format "%8s" (get-elem -array ii jj))))
     (newline)))
 
 

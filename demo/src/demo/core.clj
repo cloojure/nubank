@@ -10,8 +10,7 @@
 
 (s/set-fn-validation! true)
 
-
-(def edges-filename "edges.txt")
+(def ^:dynamic *spy* false)
 
 (def Node s/Int)
 
@@ -31,7 +30,7 @@
   (mapv coolp/parse-int (re-seq #"\d+" line-str)))
 
 (s/defn accum-edges :- Graph
-  "Update an Graph with a new edge."
+  "Update an Graph with a new edge symmetrically n1->n2 and n2->n1"
   [ graph   :- Graph 
     edge    :- Edge ]
   (let [ [n1 n2]  edge ]
@@ -63,15 +62,16 @@
   (let [connected1   (contains? (neighbors graph n1) n2)
         connected2   (contains? (neighbors graph n2) n1) 
   ]
-    (assert (= connected1 connected2))
+    (assert (= connected1 connected2)) ; must be symmetric
     connected1 ))
 
-(defn -main []
+(defn tst-array []
   (let [
     num-rows    3
     num-cols    4
     work        (atom (array/create num-rows num-cols))
   ]
+    (newline)
     (println "rows cols: " (array/num-rows @work) (array/num-cols @work))
     (array/disp @work)
     (newline)
@@ -79,19 +79,68 @@
       (dotimes [jj num-cols]
         (swap! work array/set-elem ii jj (+ (* 10 ii) jj))))
     (array/disp @work)
-    (println "done")
-  )
+  ))
 
+(defn load-edges [text]
   (let [
-    edge-lines      (str/split-lines (slurp edges-filename))
+    edge-lines      (str/split-lines text)
     edges           (mapv parse-edge edge-lines)
-    -- (s/validate [Edge] edges)
-    -- (spyx edges)
-    graph           (reduce accum-edges (sorted-map) edges)
   ]
-    (spyx graph)
-    (spyx (all-nodes graph))
-  )
+    (s/validate [Edge] edges)
+    (when *spy* (spyx edges))
+    edges ))
 
-)
+(defn load-graph [text]
+  (let [
+    edges   (load-edges text)
+    graph   (reduce accum-edges (sorted-map) edges)
+  ]
+    (when *spy* (spyx graph))
+    (when *spy* (spyx (all-nodes graph)))
+    graph))
+
+(defn shortest-path [graph]
+  (let [
+    N           (count (all-nodes graph))
+    dist        (atom (array/create N N 1e99))
+  ]
+    (newline)
+    (println "dist alloc:")
+    (array/disp @dist)
+
+    (doseq [ ii (keys graph) ]
+      (swap! dist array/set-elem ii ii 0))
+    (doseq [ ii (keys graph)
+             jj (neighbors graph ii) ]
+      (swap! dist array/set-elem ii jj 1))
+    (newline)
+    (println "dist init:")
+    (array/disp @dist)
+
+    (dotimes [kk N]
+      (dotimes [ii N]
+        (dotimes [jj N]
+          (let [dist-sum    (+ (array/get-elem @dist ii kk)
+                               (array/get-elem @dist kk jj))
+                dist-ij     (array/get-elem @dist ii jj)
+          ]
+          (when (< dist-sum dist-ij)
+            (swap! dist array/set-elem ii jj dist-sum)))))
+      (newline)
+      (println "dist:" kk)
+      (array/disp @dist)
+    )
+  ))
+
+(def edges-filename "edges.txt")
+
+(defn -main []
+; (tst-array)
+;
+  (let [
+    text        (slurp edges-filename)
+    graph       (load-graph text)
+  ]
+    (shortest-path graph)
+  ))
     
