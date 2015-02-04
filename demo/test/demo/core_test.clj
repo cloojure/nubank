@@ -63,8 +63,14 @@
     (let [
       graph     (load-graph text)
       sp        (shortest-path graph)
-      -- (is array/symmetric? sp)
+      target [ [0 1 1 1 2 2]
+               [1 0 1 2 3 3]
+               [1 1 0 2 3 3]
+               [1 2 2 0 1 1]
+               [2 3 3 1 0 1]
+               [2 3 3 1 1 0] ]
     ]
-
+      (is (array/symmetric? sp))
+      (is (= sp target))
     ))))
 

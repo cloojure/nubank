@@ -66,7 +66,8 @@
     connected1 ))
 
 
-(defn load-edges [text]
+(s/defn load-edges :- [Edge]
+  [text :- s/Str]
   (let [
     edge-lines      (str/split-lines text)
     edges           (mapv parse-edge edge-lines)
@@ -75,16 +76,18 @@
     (when *spy* (spyx edges))
     edges ))
 
-(defn load-graph [text]
-  (let [
-    edges   (load-edges text)
-    graph   (reduce accum-edges (sorted-map) edges)
+(s/defn load-graph  :- Graph
+  [text :- s/Str]
+  (let [edges   (load-edges text)
+        graph   (reduce accum-edges (sorted-map) edges)
   ]
     (when *spy* (spyx graph))
     (when *spy* (spyx (all-nodes graph)))
     graph))
 
-(defn shortest-path [graph]
+(s/defn shortest-path :- array/Array
+  [graph :- Graph]
+; (println "shortest-path: enter")
   (let [
     N           (count (all-nodes graph))
     dist        (atom (array/create N N 1e99))
@@ -110,13 +113,12 @@
     (println "dist:")
     (array/disp @dist)
     (assert (array/symmetric? @dist))
+    @dist
   ))
 
 (def edges-filename "edges.txt")
 
 (defn -main []
-; (tst-array)
-
   (binding [*spy* true]
     (let [
       text        (slurp edges-filename)
