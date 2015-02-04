@@ -117,7 +117,6 @@
   [spath :- array/Array]
   (let [farness     (forv [ii  (range (array/num-rows spath)) ]
                       (apply + (spath ii)))
-        -- (spyx farness)
         closeness   (mapv #(/ 1 %) farness)
   ]
     closeness ))

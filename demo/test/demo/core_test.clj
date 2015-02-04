@@ -52,6 +52,23 @@
 
 (deftest shortest-graph-t
   (let [text  " 0 1 
+                1 2 "
+  ]
+  (binding [*spy* true]
+    (let [
+      graph     (load-graph text)
+      spath     (shortest-path graph)
+      target [ [0 1 2]
+               [1 0 1]
+               [2 1 0] ]
+      cness    (closeness spath)          
+      cness-t  [1/3 1/2 1/3]
+    ]
+      (is (array/symmetric? spath))
+      (is (= spath target))
+      (is (= cness cness-t))
+    )))
+  (let [text  " 0 1 
                 1 2 
                 2 0 
                 0 3 
@@ -62,15 +79,19 @@
   (binding [*spy* true]
     (let [
       graph     (load-graph text)
-      sp        (shortest-path graph)
-      target [ [0 1 1 1 2 2]
-               [1 0 1 2 3 3]
-               [1 1 0 2 3 3]
-               [1 2 2 0 1 1]
-               [2 3 3 1 0 1]
-               [2 3 3 1 1 0] ]
+      spath     (shortest-path graph)
+      target    [ [0 1 1 1 2 2]
+                  [1 0 1 2 3 3]
+                  [1 1 0 2 3 3]
+                  [1 2 2 0 1 1]
+                  [2 3 3 1 0 1]
+                  [2 3 3 1 1 0] ]
+      cness     (closeness spath)
+      cness-t   [1/7 1/10 1/10 1/7 1/10 1/10]
     ]
-      (is (array/symmetric? sp))
-      (is (= sp target))
-    ))))
+      (is (array/symmetric? spath))
+      (is (= spath target))
+      (is (= cness cness-t))
+    )))
+)
 
