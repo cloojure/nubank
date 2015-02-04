@@ -134,45 +134,33 @@
 (s/defn shortest-path :- darr/Darr
   "Calculates the shortest-path betwen each pair of Nodes"
   [graph :- Graph]
-  (println "shortest-path: enter")
   (let [N           (count (all-nodes graph))
         -- (assert (= N (count graph)))
-        dist        
-            (do
-              (print "create: ") (time
-              (darr/create N N 1e99)
-            ))
+        dist        (darr/create N N 1e99)
   ]
-(print "diag: ") (time
     (doseq [ ii (keys graph) ]
       (darr/set-elem dist ii ii 0))
-)
-(print "nbrs ") (time
     (doseq [ ii (keys graph)
              jj (neighbors graph ii) ]
       (darr/set-elem dist ii jj 1))
-)
 
     (dotimes [kk N]
-      (when (= 0 (rem kk 50)) (print \newline (format "kk: %5d" kk)))
-      (print \. ) (flush)
-      (dotimes [ii N]
-        (dotimes [jj N]
-          (let [dist-sum    (+ (darr/get-elem dist ii kk)
-                               (darr/get-elem dist kk jj))
-                dist-ij     (darr/get-elem dist ii jj)
-          ]
-          (when (< dist-sum dist-ij)
-            (darr/set-elem dist ii jj dist-sum)))))
-    )
+      (let [^doubles darr-kk  (aget ^objects dist kk) ]
+        (dotimes [ii N]
+          (let [^doubles darr-ii  (aget ^objects dist ii) ]
+            (dotimes [jj N]
+              (let [dist-sum    (+ (aget darr-ii kk)
+                                   (aget darr-kk jj))
+                    dist-ij     (aget darr-ii jj)
+              ]
+              (when (< dist-sum dist-ij)
+                (aset darr-ii jj dist-sum))))))))
     (let [result 
             (into [] (for [ii (range N)]
               (into [] (for [jj (range N)]
                 (int (darr/get-elem dist ii jj))))))
     ]
       result )))
-
-; (let [^doubles darr (aget ^objects result ii)] )
 
 (s/defn closeness :- [s/Num]
   "Calculates the closeness for each node given the shortest-path array"
@@ -191,19 +179,13 @@
             *show-status* true ]
     (let [
       text      (slurp edges-filename)
-      -- (println "lines read:" (count (str/split-lines text)))
+      -- (println \newline "lines read:" (count (str/split-lines text)))
       graph     (load-graph text)
-      -- (println "graph nodes:" (count graph)
+      -- (println \newline "graph nodes:" (count graph)
                   "   edges:" (/ (reduce + (mapv count (vals graph)))
                                  2 ))
 
       spath     (shortest-path graph)
-      -- (when false
-           (let [spath-0   (shortest-path-0 graph) ]
-             (do (println "spath:") (array/disp spath))
-             (do (println "spath-0:") (array/disp spath-0))
-             (assert (= spath spath-0))))
-
       cness     (closeness spath)
       -- (newline)
       -- (spyx (take 44 cness))

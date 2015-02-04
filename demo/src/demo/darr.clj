@@ -8,6 +8,13 @@
     [cooljure.core] )
   (:gen-class))
 
+;----------------------------------------------------------------------------------------
+; This whole namespace needs to be re-worked.  Parts of it can be replaced with the
+; Prismatic hiphip library, while other parts should probably be re-written with a
+; flattened arrays structure with C-style explicit indexing (offset = irow*ncols + icol).
+; Need timing to compare speed, and vs core.matrix & native Java (e.g. JAMA, Colt, etc).
+;----------------------------------------------------------------------------------------
+
 (def Darr
   "A native 2-D array of double"
   s/Any )
