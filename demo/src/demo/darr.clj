@@ -34,8 +34,10 @@
   [ -array  :- Darr
     ii      :- s/Int
     jj      :- s/Int
-    newVal  :- s/Any]
-  (aset -array ii jj (double newVal)))
+    newVal  :- s/Any ]
+  (let [^doubles darr  (aget ^objects -array ii) ]
+    (aset darr jj (double newVal)))
+  -array)
 
 (s/defn disp :- nil
   [-array :- Darr]

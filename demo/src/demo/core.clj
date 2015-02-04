@@ -119,6 +119,7 @@
 (s/defn shortest-path :- darr/Darr
   "Calculates the shortest-path betwen each pair of Nodes"
   [graph :- Graph]
+  (println "shortest-path: enter")
   (let [N           (count (all-nodes graph))
         -- (assert (= N (count graph)))
         dist        (darr/create N N 1e99)
@@ -128,13 +129,10 @@
     (doseq [ ii (keys graph)
              jj (neighbors graph ii) ]
       (darr/set-elem dist ii jj 1))
-    (newline)
-    (println "shortest-path: init done")
-    (darr/disp dist)
 
     (dotimes [kk N]
-;     (when (= 0 (rem kk 50)) (print \newline (format "kk: %5d" kk)))
-;     (print \. ) (flush)
+      (when (= 0 (rem kk 50)) (print \newline (format "kk: %5d" kk)))
+      (print \. ) (flush)
       (dotimes [ii N]
         (dotimes [jj N]
           (let [dist-sum    (+ (darr/get-elem dist ii kk)
@@ -144,7 +142,6 @@
           (when (< dist-sum dist-ij)
             (darr/set-elem dist ii jj dist-sum)))))
     )
-    (newline)
     (let [result 
             (into [] (for [ii (range N)]
               (into [] (for [jj (range N)]
