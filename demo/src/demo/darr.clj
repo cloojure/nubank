@@ -9,8 +9,8 @@
   (:gen-class))
 
 (def Darr
-  "A 2-D array of objects."
-  [s/Any] )
+  "A native 2-D array of double"
+  s/Any )
 
 (s/defn num-rows :- s/Int
   "Returns the number of rows of an Darr."

@@ -3,6 +3,7 @@
     [clojure.string     :as str]
     [cooljure.parse     :as coolp]
     [demo.array         :as array]
+    [demo.darr          :as darr]
     [schema.core        :as s]
     [schema.test        :as s-tst] )
   (:use [cooljure.core] )
@@ -98,12 +99,10 @@
     (doseq [ ii (keys graph)
              jj (neighbors graph ii) ]
       (swap! dist array/set-elem ii jj 1))
-    (println "shortest-path: init done")
+    (println "shortest-path-0: init done")
 
     (dotimes [kk N]
-      (print \newline "kk:" kk "  " )
       (dotimes [ii N]
-        (print \i) (flush)
         (dotimes [jj N]
           (let [dist-sum    (+ (array/get-elem @dist ii kk)
                                (array/get-elem @dist kk jj))
@@ -113,26 +112,23 @@
             (swap! dist array/set-elem ii jj dist-sum)))))
     )
     (when *show-status* (newline))
-;   (assert (array/symmetric? @dist))
+    (assert (array/symmetric? @dist))
     @dist
   ))
 
-(s/defn shortest-path :- array/Array
+(s/defn shortest-path :- darr/Darr
   "Calculates the shortest-path betwen each pair of Nodes"
   [graph :- Graph]
-  (let [
-    N           (count (all-nodes graph))
-    -- (assert (= N (count graph)))
-    dist        (atom (array/create N N 1e99))
-
-    t1  (make-array 
-
+  (let [N           (count (all-nodes graph))
+        -- (assert (= N (count graph)))
+        dist        (darr/create N N 1e99)
   ]
     (doseq [ ii (keys graph) ]
-      (swap! dist array/set-elem ii ii 0))
+      (darr/set-elem dist ii ii 0))
     (doseq [ ii (keys graph)
              jj (neighbors graph ii) ]
-      (swap! dist array/set-elem ii jj 1))
+      (darr/set-elem dist ii jj 1))
+    (newline)
     (println "shortest-path: init done")
 
     (dotimes [kk N]
@@ -140,17 +136,20 @@
       (dotimes [ii N]
         (print \i) (flush)
         (dotimes [jj N]
-          (let [dist-sum    (+ (array/get-elem @dist ii kk)
-                               (array/get-elem @dist kk jj))
-                dist-ij     (array/get-elem @dist ii jj)
+          (let [dist-sum    (+ (darr/get-elem dist ii kk)
+                               (darr/get-elem dist kk jj))
+                dist-ij     (darr/get-elem dist ii jj)
           ]
           (when (< dist-sum dist-ij)
-            (swap! dist array/set-elem ii jj dist-sum)))))
+            (darr/set-elem dist ii jj dist-sum)))))
     )
-    (when *show-status* (newline))
-;   (assert (array/symmetric? @dist))
-    @dist
-  ))
+    (newline)
+    (let [result 
+            (into [] (for [ii (range N)]
+              (into [] (for [jj (range N)]
+                (int (darr/get-elem dist ii jj))))))
+    ]
+      result )))
 
 (s/defn closeness :- [s/Num]
   "Calculates the closeness for each node given the shortest-path array"
@@ -161,8 +160,8 @@
   ]
     closeness ))
 
-(def edges-filename "edges.txt")
 (def edges-filename "edges-full.txt")
+(def edges-filename "edges.txt")
 
 (defn -main []
   (binding [*spy* false
@@ -171,8 +170,13 @@
       text      (slurp edges-filename)
       graph     (load-graph text)
       -- (println "graph nodes" (count graph))
+
+      spath-0   (shortest-path-0 graph)
+      -- (do (println "spath-0:") (array/disp spath-0))
       spath     (shortest-path graph)
       -- (do (println "spath:") (array/disp spath))
+      -- (assert (= spath spath-0))
+
       cness     (closeness spath)
       -- (newline)
       -- (spyx (take 44 cness))
