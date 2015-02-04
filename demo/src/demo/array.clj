@@ -56,6 +56,18 @@
           (<= 0 jj) (< jj (num-cols -array)) ] }
   (get-in -array [ii jj]))
 
+(s/defn symmetric? :- s/Bool
+  "Gets an Array element"
+  [ -array  :- Array ]
+  (let [nrows (num-rows -array)
+        ncols (num-cols -array) ]
+    (and  (= nrows ncols)
+          (every? truthy? 
+            (for [ii (range nrows)
+                  jj (range ncols) ]
+              (= (get-elem -array ii jj)
+                 (get-elem -array jj ii)))))))
+
 (defn disp [-array]
   (dotimes [ii (num-rows -array)]
     (dotimes [jj (num-cols -array)]

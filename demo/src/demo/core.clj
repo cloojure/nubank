@@ -104,8 +104,6 @@
     N           (count (all-nodes graph))
     dist        (atom (array/create N N 1e99))
   ]
-    (newline)
-    (println "dist alloc:")
     (array/disp @dist)
 
     (doseq [ ii (keys graph) ]
@@ -113,8 +111,8 @@
     (doseq [ ii (keys graph)
              jj (neighbors graph ii) ]
       (swap! dist array/set-elem ii jj 1))
-    (newline)
-    (println "dist init:")
+;   (newline)
+;   (println "dist init:")
     (array/disp @dist)
 
     (dotimes [kk N]
@@ -126,21 +124,23 @@
           ]
           (when (< dist-sum dist-ij)
             (swap! dist array/set-elem ii jj dist-sum)))))
-      (newline)
-      (println "dist:" kk)
-      (array/disp @dist)
     )
+    (newline)
+    (println "dist:")
+    (array/disp @dist)
+    (assert (array/symmetric? @dist))
   ))
 
 (def edges-filename "edges.txt")
 
 (defn -main []
 ; (tst-array)
-;
-  (let [
-    text        (slurp edges-filename)
-    graph       (load-graph text)
-  ]
-    (shortest-path graph)
-  ))
+
+  (binding [*spy* true]
+    (let [
+      text        (slurp edges-filename)
+      graph       (load-graph text)
+    ]
+      (shortest-path graph)
+    )))
     

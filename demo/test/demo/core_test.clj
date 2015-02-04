@@ -3,7 +3,8 @@
   (:use clojure.test 
         cooljure.core )
   (:require 
-    [schema.test :as s-tst]
+    [schema.test    :as s-tst]
+    [demo.array     :as array]
   ))
 
 (use-fixtures :once s-tst/validate-schemas)
@@ -50,13 +51,20 @@
         )))))
 
 (deftest shortest-graph-t
-  (let [lines  "0 1
-                1 2
-                2 0
-                0 3
-                3 4
-                4 5
+  (let [text  " 0 1 
+                1 2 
+                2 0 
+                0 3 
+                3 4 
+                4 5 
                 5 3"
   ]
-  ))
+  (binding [*spy* true]
+    (let [
+      graph     (load-graph text)
+      sp        (shortest-path graph)
+      -- (is array/symmetric? sp)
+    ]
+
+    ))))
 
