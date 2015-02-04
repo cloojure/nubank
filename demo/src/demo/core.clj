@@ -86,8 +86,8 @@
     graph))
 
 (s/defn shortest-path :- array/Array
+  "Calculates the shortest-path betwen each pair of Nodes"
   [graph :- Graph]
-; (println "shortest-path: enter")
   (let [
     N           (count (all-nodes graph))
     dist        (atom (array/create N N 1e99))
@@ -97,7 +97,6 @@
     (doseq [ ii (keys graph)
              jj (neighbors graph ii) ]
       (swap! dist array/set-elem ii jj 1))
-    (array/disp @dist)
 
     (dotimes [kk N]
       (dotimes [ii N]
@@ -109,21 +108,32 @@
           (when (< dist-sum dist-ij)
             (swap! dist array/set-elem ii jj dist-sum)))))
     )
-    (newline)
-    (println "dist:")
-    (array/disp @dist)
     (assert (array/symmetric? @dist))
     @dist
   ))
+
+(s/defn closeness :- [s/Num]
+  "Calculates the closeness for each node given the shortest-path array"
+  [spath :- array/Array]
+  (let [farness     (forv [ii  (range (array/num-rows spath)) ]
+                      (apply + (spath ii)))
+        -- (spyx farness)
+        closeness   (mapv #(/ 1 %) farness)
+  ]
+    closeness ))
 
 (def edges-filename "edges.txt")
 
 (defn -main []
   (binding [*spy* true]
     (let [
-      text        (slurp edges-filename)
-      graph       (load-graph text)
+      text      (slurp edges-filename)
+      graph     (load-graph text)
+      spath     (shortest-path graph)
+      -- (do (println "spath:") (array/disp spath))
+      cness     (closeness spath)
     ]
-      (shortest-path graph)
+      (newline)
+      (spyx cness)
     )))
     
