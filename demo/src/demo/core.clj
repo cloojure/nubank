@@ -86,12 +86,47 @@
 ;   (when *spy* (spyx (all-nodes graph)))
     graph))
 
-(s/defn shortest-path :- array/Array
+(s/defn shortest-path-0 :- array/Array
   "Calculates the shortest-path betwen each pair of Nodes"
   [graph :- Graph]
   (let [
     N           (count (all-nodes graph))
     dist        (atom (array/create N N 1e99))
+  ]
+    (doseq [ ii (keys graph) ]
+      (swap! dist array/set-elem ii ii 0))
+    (doseq [ ii (keys graph)
+             jj (neighbors graph ii) ]
+      (swap! dist array/set-elem ii jj 1))
+    (println "shortest-path: init done")
+
+    (dotimes [kk N]
+      (print \newline "kk:" kk "  " )
+      (dotimes [ii N]
+        (print \i) (flush)
+        (dotimes [jj N]
+          (let [dist-sum    (+ (array/get-elem @dist ii kk)
+                               (array/get-elem @dist kk jj))
+                dist-ij     (array/get-elem @dist ii jj)
+          ]
+          (when (< dist-sum dist-ij)
+            (swap! dist array/set-elem ii jj dist-sum)))))
+    )
+    (when *show-status* (newline))
+;   (assert (array/symmetric? @dist))
+    @dist
+  ))
+
+(s/defn shortest-path :- array/Array
+  "Calculates the shortest-path betwen each pair of Nodes"
+  [graph :- Graph]
+  (let [
+    N           (count (all-nodes graph))
+    -- (assert (= N (count graph)))
+    dist        (atom (array/create N N 1e99))
+
+    t1  (make-array 
+
   ]
     (doseq [ ii (keys graph) ]
       (swap! dist array/set-elem ii ii 0))
