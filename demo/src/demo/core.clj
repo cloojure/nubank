@@ -130,11 +130,12 @@
       (darr/set-elem dist ii jj 1))
     (newline)
     (println "shortest-path: init done")
+    (darr/disp dist)
 
     (dotimes [kk N]
-      (print \newline "kk:" kk "  " )
+;     (when (= 0 (rem kk 50)) (print \newline (format "kk: %5d" kk)))
+;     (print \. ) (flush)
       (dotimes [ii N]
-        (print \i) (flush)
         (dotimes [jj N]
           (let [dist-sum    (+ (darr/get-elem dist ii kk)
                                (darr/get-elem dist kk jj))
@@ -151,6 +152,8 @@
     ]
       result )))
 
+; (let [^doubles darr (aget ^objects result ii)] )
+
 (s/defn closeness :- [s/Num]
   "Calculates the closeness for each node given the shortest-path array"
   [spath :- array/Array]
@@ -160,8 +163,8 @@
   ]
     closeness ))
 
-(def edges-filename "edges-full.txt")
 (def edges-filename "edges.txt")
+(def edges-filename "edges-full.txt")
 
 (defn -main []
   (binding [*spy* false
@@ -171,11 +174,12 @@
       graph     (load-graph text)
       -- (println "graph nodes" (count graph))
 
-      spath-0   (shortest-path-0 graph)
-      -- (do (println "spath-0:") (array/disp spath-0))
       spath     (shortest-path graph)
-      -- (do (println "spath:") (array/disp spath))
-      -- (assert (= spath spath-0))
+      -- (when false
+           (let [spath-0   (shortest-path-0 graph) ]
+             (do (println "spath:") (array/disp spath))
+             (do (println "spath-0:") (array/disp spath-0))
+             (assert (= spath spath-0))))
 
       cness     (closeness spath)
       -- (newline)

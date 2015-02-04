@@ -51,13 +51,18 @@
         )))))
 
 (deftest shortest-graph-t
-  (let [text  " 0 1 
-                1 2 "
+  (println "shortest-graph-t #1")
+  (let [text  " 0 1
+                1 2"
   ]
   (binding [*spy* true]
     (let [
       graph     (load-graph text)
+      -- (spyx graph)
       spath     (shortest-path graph)
+      -- (println "spath")
+      -- (array/disp spath)
+
       target    [ [0 1 2]
                   [1 0 1]
                   [2 1 0] ]
@@ -65,9 +70,14 @@
       cness-t  [1/3 1/2 1/3]
     ]
       (is (array/symmetric? spath))
+      (println "target")
+      (array/disp target)
+
       (is (= spath target))
       (is (= cness cness-t))
     )))
+
+  (println "shortest-graph-t #2")
   (let [text  " 0 1 
                 1 2 
                 2 0 

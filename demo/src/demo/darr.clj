@@ -22,12 +22,12 @@
   [it :- Darr]
   (alength (aget it 0)))
 
-(s/defn get-elem :- s/Any
+(s/defn get-elem :- s/Num
   "Gets an Darr element"
   [ -array  :- Darr
     ii      :- s/Int
     jj      :- s/Int ]
-  (aget -array ii jj))
+  (double (aget -array ii jj)))
 
 (s/defn set-elem :- Darr
   "Puts a value into an Darr element, returning the updated Darr."
@@ -54,11 +54,13 @@
   ( [nrows      :- s/Int 
      ncols      :- s/Int
      init-val   :- s/Num]
-    (let [result  (make-array Double/TYPE nrows ncols) ]
+    (let [result    (make-array Double/TYPE nrows ncols) 
+          init-val  (double init-val) 
+    ]
       (dotimes [ii nrows]
         (dotimes [jj ncols]
-;         (let [^doubles darr (aget ^objects result ii)] )
-          (aset result ii jj init-val)))
+          (let [^doubles darr  (aget ^objects result ii) ]
+            (aset darr jj init-val))))
       result
     )
   )
