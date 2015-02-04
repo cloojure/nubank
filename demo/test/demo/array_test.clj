@@ -34,13 +34,12 @@
     (dotimes [ii 3]
       (dotimes [jj 4]
         (swap! a34 set-elem ii jj (str ii jj))))
-;   (println \newline "a34:") (disp @a34) 
-    (dotimes [ii 3]
-      (dotimes [jj 4]
-        (let [target    (str ii jj)
-              actual    (get-elem @a34 ii jj) ]
-        (when-not (= target actual)
-          (is false (str "set/get mismatch: " target " " actual)))))))
+    (println \newline "a34:") (disp @a34) 
+    (let [target    [ [ "00" "01" "02" "03" ]
+                      [ "10" "11" "12" "13" ]
+                      [ "20" "21" "22" "23" ] ]
+    ]
+      (is (= target @a34))))
 )
 
 (deftest symmetric-t

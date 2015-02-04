@@ -65,21 +65,6 @@
     (assert (= connected1 connected2)) ; must be symmetric
     connected1 ))
 
-(defn tst-array []
-  (let [
-    num-rows    3
-    num-cols    4
-    work        (atom (array/create num-rows num-cols))
-  ]
-    (newline)
-    (println "rows cols: " (array/num-rows @work) (array/num-cols @work))
-    (array/disp @work)
-    (newline)
-    (dotimes [ii num-rows]
-      (dotimes [jj num-cols]
-        (swap! work array/set-elem ii jj (+ (* 10 ii) jj))))
-    (array/disp @work)
-  ))
 
 (defn load-edges [text]
   (let [
@@ -104,15 +89,11 @@
     N           (count (all-nodes graph))
     dist        (atom (array/create N N 1e99))
   ]
-    (array/disp @dist)
-
     (doseq [ ii (keys graph) ]
       (swap! dist array/set-elem ii ii 0))
     (doseq [ ii (keys graph)
              jj (neighbors graph ii) ]
       (swap! dist array/set-elem ii jj 1))
-;   (newline)
-;   (println "dist init:")
     (array/disp @dist)
 
     (dotimes [kk N]
