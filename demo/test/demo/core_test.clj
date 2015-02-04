@@ -58,9 +58,9 @@
     (let [
       graph     (load-graph text)
       spath     (shortest-path graph)
-      target [ [0 1 2]
-               [1 0 1]
-               [2 1 0] ]
+      target    [ [0 1 2]
+                  [1 0 1]
+                  [2 1 0] ]
       cness    (closeness spath)          
       cness-t  [1/3 1/2 1/3]
     ]

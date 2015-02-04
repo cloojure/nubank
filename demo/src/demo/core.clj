@@ -131,6 +131,12 @@
       spath     (shortest-path graph)
       -- (do (println "spath:") (array/disp spath))
       cness     (closeness spath)
+      -- (newline)
+      -- (spyx cness)
+      cness     (sort-by :closeness > 
+                  (mapv #(hash-map :closeness %1  :node %2)  
+                        cness 
+                        (range (count cness))))
     ]
       (newline)
       (spyx cness)
