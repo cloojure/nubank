@@ -44,16 +44,46 @@
       [:h1 "Graph is empty"] )
   ))
 
-(defn show-closeness []
+(defn closeness []
   (apply layout/common 
     (for [entry (graph/calc-closeness) ]
       [:p (print-str entry) ]
     )))
 
+(defn add-fraud
+  "Add a node to the fraudulent list, returning the list"
+  [node]
+  (swap! graph/fraud-nodes conj node)
+  (layout/common 
+    [:h1 (str "Added Fraud node:" node)]
+    [:p (print-str "All fraud nodes:" graph/fraud-nodes)]
+  ))
+
+(defn fraud-nodes 
+  "Returns a list of all fraud nodes"
+  []
+  (layout/common 
+    [:h1 "All fraud nodes:"]
+    [:p (print-str graph/fraud-nodes) ]
+  ))
+
+(defn reset 
+  "Reset server to empty graph"
+  []
+  (graph/reset)
+  (layout/common 
+    [:h1 "System reset performed"]
+    [:h2 (print-str "Nodes:" (count (graph/all-nodes))) ]
+    [:h2 (print-str "Fraud Nodes:" (count @graph/fraud-nodes)) ]
+  ))
+
+
 (defroutes home-routes
   (GET   "/" [] (home))
   (GET   "/add-edge/:n1/:n2" [n1 n2] (add-edge n1 n2))
-  (GET   "/calc-closeness" [] (show-closeness))
+  (GET   "/closeness" [] (closeness))
   (GET   "/graph" [] (show-graph))
-  (GET   "/reset" [] (graph/reset))
+  (GET   "/reset" [] (reset))
+  (GET   "/add-fraud/:node" [node] (add-fraud node))
+  (GET   "/fraud-nodes" [] (fraud-nodes))
 )

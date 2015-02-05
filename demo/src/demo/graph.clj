@@ -27,14 +27,21 @@
   connects n0 to each of n1, n2, n3 ..."
   { Node #{Node} } )
 
+
 (def graph 
   "The current graph"
   (atom (sorted-map)))
 
+(def fraud-nodes 
+  "A set of nodes flagged as fraudulent"
+  (atom (sorted-set)))
+
 (defn reset 
   "Reset graph to empty"
   []
-  (reset! graph (sorted-map)))
+  (reset! graph         (sorted-map))
+  (reset! fraud-nodes   (sorted-set)))
+
 
 (s/defn num-edges :- s/Int
   "Returns the number of (symmetric) edges in the graph"
@@ -48,9 +55,9 @@
 (s/defn all-nodes :- #{Node}
   "Returns a set of all nodes in the graph"
   []
+  (spy :msg "all-nodes result:"
   (into (sorted-set)
-    (flatten
-      [ (keys @graph)  (map seq (vals @graph)) ] )))
+      (keys @graph))))
 
 (s/defn neighbors :- #{Node}
   "Returns the set of the neighbors for a node"
@@ -156,6 +163,11 @@
     (spyx (take 20 closeness-maps))
     closeness-maps 
   ))
+
+(s/defn proc-fraud :- nil
+  []
+  nil
+)
 
 (defn -main []
   (binding [*spy* false
