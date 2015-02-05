@@ -140,6 +140,21 @@
 (def edges-filename "edges.txt")
 (def edges-filename "edges-full.txt")
 
+(defn calc-closeness []
+  (let [
+    spath             (shortest-path)
+    closeness-raw     (closeness spath)
+      -- (newline)
+      -- (spyx (take 44 closeness-raw))
+
+    closeness-maps    (mapv #(hash-map :closeness %1  :node %2)  
+                            closeness-raw 
+                            (range (count closeness-raw)))
+    closeness-maps    (sort-by :closeness > closeness-maps)
+  ]
+    closeness-maps 
+  ))
+
 (defn -main []
   (binding [*spy* false
             *show-status* true ]
@@ -161,6 +176,7 @@
                   (mapv #(hash-map :closeness %1  :node %2)  
                         cness 
                         (range (count cness))))
+      closeness-maps  (calc-closeness)
     ]
       (newline)
       (spyx (take 44 cness))
