@@ -1,36 +1,19 @@
-# demo
+# srv
 
-FIXME: description
+FIXME
 
-## Installation
+## Prerequisites
 
-Download from http://example.com/FIXME.
+You will need [Leiningen][1] 1.7.0 or above installed.
 
-## Usage
+[1]: https://github.com/technomancy/leiningen
 
-FIXME: explanation
+## Running
 
-    $ java -jar demo-0.1.0-standalone.jar [args]
+To start a web server for the application, run:
 
-## Options
-
-FIXME: listing of options this app accepts.
-
-## Examples
-
-...
-
-### Bugs
-
-...
-
-### Any Other Sections
-### That You Think
-### Might be Useful
+    lein ring server
 
 ## License
 
 Copyright © 2015 FIXME
-
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.

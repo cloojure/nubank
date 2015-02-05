@@ -1,10 +1,7 @@
 (ns demo.darr-test
   (:use demo.darr)
   (:use clojure.test 
-        cooljure.core )
-  (:require 
-    [schema.test    :as s-tst]
-  ))
+        cooljure.core ))
 
 (deftest arrays-t
   (newline)
