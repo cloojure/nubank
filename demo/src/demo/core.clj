@@ -84,8 +84,7 @@
     (s/validate [Edge] edges)
     edges ))
 
-; #todo rename -> add-edge
-(s/defn accum-edges :- nil
+(s/defn add-edge :- nil
   "Update an Graph with a new edge symmetrically n1->n2 and n2->n1"
   [ [n1 n2] :- Edge ]
   (swap! graph update-in [n1]  (fnil conj (sorted-set))  n2)
@@ -94,7 +93,7 @@
 (s/defn load-graph :- nil
   [text :- s/Str]
   (let [edges       (load-edges text)
-        --          (doseq [edge edges] (accum-edges edge))
+        --          (doseq [edge edges] (add-edge edge))
         edge-sets   (mapv #(into (sorted-set) %) edges)
         edge-freqs  (frequencies edge-sets)
         edge-dups   (filter #(< 1 (val %)) edge-freqs)

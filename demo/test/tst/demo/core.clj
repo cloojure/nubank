@@ -16,16 +16,16 @@
   (is (thrown? Exception    (parse-edge [1 2] )))
 )
 
-(deftest accum-edges-t
+(deftest add-edge-t
   (demo.core/reset)
-  (accum-edges [1 2])
+  (add-edge [1 2])
   (is (= { 1 #{2}
            2 #{1} }
          @graph))
   
   (demo.core/reset)
   (doseq [edge  [[1 2] [2 3]]] 
-    (accum-edges edge))
+    (add-edge edge))
   (is (= { 1 #{2}
            2 #{1 3}
            3 #{2} }
@@ -33,7 +33,7 @@
 
   (demo.core/reset)
   (doseq [edge [[1 2] [2 3] [2 4] [3 4] [4 5]]]
-    (accum-edges edge))
+    (add-edge edge))
   (is (= { 1 #{2}
            2 #{1 3 4}
            3 #{2 4}
@@ -45,7 +45,7 @@
 (deftest symmetry-t
   (demo.core/reset)
   (doseq [edge [[1 2] [2 3] [2 4] [3 4] [4 5]]]
-    (accum-edges edge))
+    (add-edge edge))
   (let [nodes (all-nodes) ]
     (is (= nodes #{1 2 3 4 5}))
     (doseq [node nodes]
