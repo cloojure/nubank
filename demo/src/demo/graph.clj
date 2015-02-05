@@ -15,6 +15,9 @@
 (def ^:dynamic *spy* false)
 (def ^:dynamic *show-status* false)
 
+(def edges-filename "edges.txt")
+(def edges-filename "edges-full.txt")
+
 (def Node s/Int)
 
 (def Edge 
@@ -104,12 +107,11 @@
     (println "   Values =" edge-dups)
   ))
 
-(s/defn shortest-path :- darr/Darr
+(s/defn shortest-path :- array/Array
   "Calculates the shortest-path betwen each pair of Nodes"
   []
-  (let [N           (count (all-nodes))
-        -- (assert (= N (count @graph)))
-        dist        (darr/create N N 1e99)
+  (let [N       (count (all-nodes))
+        dist    (darr/create N N 1e99)
   ]
     (doseq [ ii (keys @graph) ]
       (darr/set-elem dist ii ii 0))
@@ -128,12 +130,12 @@
               ]
               (when (< dist-sum dist-ij)
                 (aset darr-ii jj dist-sum))))))))
-    (let [result 
+    (let [result-array
             (into [] (for [ii (range N)]
               (into [] (for [jj (range N)]
                 (int (darr/get-elem dist ii jj))))))
     ]
-      result )))
+      result-array )))
 
 (s/defn closeness :- [s/Num]
   "Calculates the closeness for each node given the shortest-path array"
@@ -144,12 +146,12 @@
   ]
     closeness ))
 
-(def edges-filename "edges.txt")
-(def edges-filename "edges-full.txt")
-
 (defn calc-closeness []
   (let [
     spath             (shortest-path)
+      -- (newline)
+      -- (println "Shortest path:")
+      -- (array/disp spath)
     closeness-raw     (closeness spath)
       -- (newline)
       -- (spyx (take 44 closeness-raw))
