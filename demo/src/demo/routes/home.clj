@@ -32,7 +32,22 @@
           ] ))
     )))
 
+(defn show-graph []
+  (if (< 0 (count @graph/graph))
+    (let [out     (for [entry @graph/graph]
+                    [:p (println-str entry) ] )
+    ]
+      (apply layout/common out)
+    )
+    ; else
+    (layout/common
+      [:h1 "Graph is empty"] )
+  ))
+
 (defroutes home-routes
   (GET   "/" [] (home))
   (GET   "/add-edge/:n1/:n2" [n1 n2] (add-edge n1 n2))
+  (GET   "/calc-closeness" [] (graph/calc-closeness))
+  (GET   "/graph" [] (show-graph))
+  (GET   "/reset" [] (graph/reset))
 )

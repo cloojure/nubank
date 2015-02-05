@@ -152,6 +152,8 @@
                             (range (count closeness-raw)))
     closeness-maps    (sort-by :closeness > closeness-maps)
   ]
+    (newline)
+    (spyx (take 20 closeness-maps))
     closeness-maps 
   ))
 
@@ -168,17 +170,7 @@
                           (reduce + it)
                           (/ it 2 )))
 
-      spath     (shortest-path)
-      cness     (closeness spath)
-        -- (newline)
-        -- (spyx (take 44 cness))
-      cness     (sort-by :closeness > 
-                  (mapv #(hash-map :closeness %1  :node %2)  
-                        cness 
-                        (range (count cness))))
       closeness-maps  (calc-closeness)
     ]
-      (newline)
-      (spyx (take 44 cness))
     )))
     
