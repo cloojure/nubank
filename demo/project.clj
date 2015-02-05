@@ -21,7 +21,7 @@
                                       [ring/ring-devel "1.3.1"] ]
                     }
   }
-  :main ^:skip-aot demo.core
+  :main ^:skip-aot demo.graph
   :target-path "target/%s"
   :jvm-opts ^:replace []
 )

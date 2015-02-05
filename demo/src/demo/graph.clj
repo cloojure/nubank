@@ -1,4 +1,4 @@
-(ns demo.core
+(ns demo.graph
   (:require
     [clojure.string     :as str]
     [cooljure.parse     :as coolp]

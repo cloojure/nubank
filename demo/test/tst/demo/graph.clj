@@ -1,5 +1,5 @@
-(ns tst.demo.core
-  (:use demo.core)
+(ns tst.demo.graph
+  (:use demo.graph)
   (:use clojure.test 
         cooljure.core )
   (:require 
@@ -17,13 +17,13 @@
 )
 
 (deftest add-edge-t
-  (demo.core/reset)
+  (demo.graph/reset)
   (add-edge [1 2])
   (is (= { 1 #{2}
            2 #{1} }
          @graph))
   
-  (demo.core/reset)
+  (demo.graph/reset)
   (doseq [edge  [[1 2] [2 3]]] 
     (add-edge edge))
   (is (= { 1 #{2}
@@ -31,7 +31,7 @@
            3 #{2} }
          @graph))
 
-  (demo.core/reset)
+  (demo.graph/reset)
   (doseq [edge [[1 2] [2 3] [2 4] [3 4] [4 5]]]
     (add-edge edge))
   (is (= { 1 #{2}
@@ -43,7 +43,7 @@
 )
 
 (deftest symmetry-t
-  (demo.core/reset)
+  (demo.graph/reset)
   (doseq [edge [[1 2] [2 3] [2 4] [3 4] [4 5]]]
     (add-edge edge))
   (let [nodes (all-nodes) ]
@@ -62,7 +62,7 @@
                 1 2"
   ]
   (binding [*spy* true]
-    (demo.core/reset)
+    (demo.graph/reset)
     (load-graph text)
     (spyx graph)
     (let [
@@ -94,7 +94,7 @@
                 5 3"
   ]
   (binding [*spy* true]
-    (demo.core/reset)
+    (demo.graph/reset)
     (load-graph text)
     (let [
       spath     (shortest-path)
