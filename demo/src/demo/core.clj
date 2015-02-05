@@ -27,6 +27,15 @@
   connects n0 to each of n1, n2, n3 ..."
   { Node #{Node} } )
 
+(def graph 
+  "The current graph"
+  (atom (sorted-map)))
+
+(defn reset 
+  "Reset graph to empty"
+  []
+  (reset! graph (sorted-map)))
+
 (s/defn parse-edge :- Edge
   "Parse a string of the form 'n1 n2', returning a vector like [n1 n2]" 
   [line-str :- s/Str]
@@ -34,52 +43,37 @@
 
 (s/defn num-edges :- s/Int
   "Returns the number of (symmetric) edges in the graph"
-  [graph :- Graph]
-  (let [edges-dest  (vals graph)
+  []
+  (let [edges-dest  (vals @graph)
         dest-sum    (reduce + 0 (mapv count edges-dest))
         result      (/ dest-sum 2)
   ]
     result ))
 
-(s/defn accum-edges :- Graph
-  "Update an Graph with a new edge symmetrically n1->n2 and n2->n1"
-  [ graph   :- Graph 
-    edge    :- Edge ]
-  (let [ [n1 n2]    edge 
-        result      (as-> graph result
-                      (update-in result [n1]  (fnil conj (sorted-set))  n2)
-                      (update-in result [n2]  (fnil conj (sorted-set))  n1))
-  ]
-    result
-  ))
-
 (s/defn all-nodes :- #{Node}
   "Returns a set of all nodes in the graph"
-  [graph :- Graph]
+  []
   (into (sorted-set)
     (flatten
-      [ (keys graph)  (map seq (vals graph)) ] )))
+      [ (keys @graph)  (map seq (vals @graph)) ] )))
 
 (s/defn neighbors :- #{Node}
   "Returns the set of the neighbors for a node"
-  [ graph   :- Graph
-    node    :- Node ]
-  {:pre [ (contains? graph node) ] }
-  (graph node))
+  [ node :- Node ]
+  {:pre [ (contains? @graph node) ] }
+  (@graph node))
 
 (s/defn connected? :- s/Bool
   "Returns true if two nodes are connected by an edge."
-  [ graph   :- Graph
-    n1      :- Node
-    n2      :- Node ]
-  {:pre [ (contains? graph n1) 
-          (contains? graph n2) ] }
-  (let [connected1   (contains? (neighbors graph n1) n2)
-        connected2   (contains? (neighbors graph n2) n1) 
+  [ n1 :- Node
+    n2 :- Node ]
+  {:pre [ (contains? @graph n1) 
+          (contains? @graph n2) ] }
+  (let [connected1   (contains? (neighbors n1) n2)
+        connected2   (contains? (neighbors n2) n1) 
   ]
     (assert (= connected1 connected2)) ; must be symmetric
     connected1 ))
-
 
 (s/defn load-edges :- [Edge]
   [text :- s/Str]
@@ -90,58 +84,36 @@
     (s/validate [Edge] edges)
     edges ))
 
-(s/defn load-graph  :- Graph
+; #todo rename -> add-edge
+(s/defn accum-edges :- nil
+  "Update an Graph with a new edge symmetrically n1->n2 and n2->n1"
+  [ [n1 n2] :- Edge ]
+  (swap! graph update-in [n1]  (fnil conj (sorted-set))  n2)
+  (swap! graph update-in [n2]  (fnil conj (sorted-set))  n1))
+
+(s/defn load-graph :- nil
   [text :- s/Str]
   (let [edges       (load-edges text)
-        graph       (reduce accum-edges (sorted-map) edges)
+        --          (doseq [edge edges] (accum-edges edge))
         edge-sets   (mapv #(into (sorted-set) %) edges)
         edge-freqs  (frequencies edge-sets)
         edge-dups   (filter #(< 1 (val %)) edge-freqs)
   ]
     (println "Duplicate Edges:  Count =" (count edge-dups))
     (println "   Values =" edge-dups)
-    graph))
-
-(s/defn shortest-path-0 :- array/Array
-  "Calculates the shortest-path betwen each pair of Nodes"
-  [graph :- Graph]
-  (let [
-    N           (count (all-nodes graph))
-    dist        (atom (array/create N N 1e99))
-  ]
-    (doseq [ ii (keys graph) ]
-      (swap! dist array/set-elem ii ii 0))
-    (doseq [ ii (keys graph)
-             jj (neighbors graph ii) ]
-      (swap! dist array/set-elem ii jj 1))
-    (println "shortest-path-0: init done")
-
-    (dotimes [kk N]
-      (dotimes [ii N]
-        (dotimes [jj N]
-          (let [dist-sum    (+ (array/get-elem @dist ii kk)
-                               (array/get-elem @dist kk jj))
-                dist-ij     (array/get-elem @dist ii jj)
-          ]
-          (when (< dist-sum dist-ij)
-            (swap! dist array/set-elem ii jj dist-sum)))))
-    )
-    (when *show-status* (newline))
-    (assert (array/symmetric? @dist))
-    @dist
   ))
 
 (s/defn shortest-path :- darr/Darr
   "Calculates the shortest-path betwen each pair of Nodes"
-  [graph :- Graph]
-  (let [N           (count (all-nodes graph))
-        -- (assert (= N (count graph)))
+  []
+  (let [N           (count (all-nodes))
+        -- (assert (= N (count @graph)))
         dist        (darr/create N N 1e99)
   ]
-    (doseq [ ii (keys graph) ]
+    (doseq [ ii (keys @graph) ]
       (darr/set-elem dist ii ii 0))
-    (doseq [ ii (keys graph)
-             jj (neighbors graph ii) ]
+    (doseq [ ii (keys @graph)
+             jj (neighbors ii) ]
       (darr/set-elem dist ii jj 1))
 
     (dotimes [kk N]
@@ -180,12 +152,14 @@
     (let [
       text      (slurp edges-filename)
       -- (println \newline "lines read:" (count (str/split-lines text)))
-      graph     (load-graph text)
-      -- (println \newline "graph nodes:" (count graph)
-                  "   edges:" (/ (reduce + (mapv count (vals graph)))
-                                 2 ))
+      --        (load-graph text)
+      -- (println \newline "graph nodes:" (count @graph) "   edges:"   
+                  (as-> (vals @graph) it
+                        (mapv count it)
+                        (reduce + it)
+                        (/ it 2 )))
 
-      spath     (shortest-path graph)
+      spath     (shortest-path)
       cness     (closeness spath)
       -- (newline)
       -- (spyx (take 44 cness))

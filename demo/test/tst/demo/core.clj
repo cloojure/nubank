@@ -17,37 +17,43 @@
 )
 
 (deftest accum-edges-t
- (is (= { 1 #{2}
-          2 #{1} }
-        (accum-edges {} [1 2])))
- (is (= { 1 #{2}
-          2 #{1 3}
-          3 #{2} }
-        (reduce accum-edges {} [[1 2] [2 3]] )))
- (is (= { 1 #{2}
-          2 #{1 3 4}
-          3 #{2 4}
-          4 #{2 3 5}
-          5 #{4} }
-        (reduce accum-edges 
-                {} 
-                [[1 2] [2 3] [2 4] [3 4] [4 5]] )))
+  (demo.core/reset)
+  (accum-edges [1 2])
+  (is (= { 1 #{2}
+           2 #{1} }
+         @graph))
+  
+  (demo.core/reset)
+  (doseq [edge  [[1 2] [2 3]]] 
+    (accum-edges edge))
+  (is (= { 1 #{2}
+           2 #{1 3}
+           3 #{2} }
+         @graph))
+
+  (demo.core/reset)
+  (doseq [edge [[1 2] [2 3] [2 4] [3 4] [4 5]]]
+    (accum-edges edge))
+  (is (= { 1 #{2}
+           2 #{1 3 4}
+           3 #{2 4}
+           4 #{2 3 5}
+           5 #{4} }
+         @graph))
 )
 
 (deftest symmetry-t
-  (let [
-    graph    (reduce accum-edges 
-                {} 
-                [[1 2] [2 3] [2 4] [3 4] [4 5]] )
-    nodes    (all-nodes graph)
-  ]
+  (demo.core/reset)
+  (doseq [edge [[1 2] [2 3] [2 4] [3 4] [4 5]]]
+    (accum-edges edge))
+  (let [nodes (all-nodes) ]
     (is (= nodes #{1 2 3 4 5}))
     (doseq [node nodes]
       (do
-        (is (contains? graph node))
-        (doseq [nbr (neighbors graph node)]
-          (is (connected? graph node nbr))
-          (is (connected? graph nbr node))
+        (is (contains? @graph node))
+        (doseq [nbr (neighbors node)]
+          (is (connected? node nbr))
+          (is (connected? nbr node))
         )))))
 
 (deftest shortest-graph-t
@@ -56,10 +62,11 @@
                 1 2"
   ]
   (binding [*spy* true]
+    (demo.core/reset)
+    (load-graph text)
+    (spyx graph)
     (let [
-      graph     (load-graph text)
-      -- (spyx graph)
-      spath     (shortest-path graph)
+      spath     (shortest-path)
       -- (println "spath")
       -- (array/disp spath)
 
@@ -87,9 +94,10 @@
                 5 3"
   ]
   (binding [*spy* true]
+    (demo.core/reset)
+    (load-graph text)
     (let [
-      graph     (load-graph text)
-      spath     (shortest-path graph)
+      spath     (shortest-path)
       target    [ [0 1 1 1 2 2]
                   [1 0 1 2 3 3]
                   [1 1 0 2 3 3]
