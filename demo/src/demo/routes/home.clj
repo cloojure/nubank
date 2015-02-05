@@ -14,8 +14,8 @@
     (println "received: (add-edge" n1 n2 ")" )
     (layout/common 
       [:h1 "Add Edge" 
-      [:p (format "n1: %3d" n1)]
-      [:p (format "n2: %3d" n2)]
+      [:p (format "n1=%d" n1)]
+      [:p (format "n2=%d" n2)]
       ] )))
 
 (defroutes home-routes
