@@ -44,10 +44,16 @@
       [:h1 "Graph is empty"] )
   ))
 
+(defn show-closeness []
+  (apply layout/common 
+    (for [entry (graph/calc-closeness) ]
+      [:p (print-str entry) ]
+    )))
+
 (defroutes home-routes
   (GET   "/" [] (home))
   (GET   "/add-edge/:n1/:n2" [n1 n2] (add-edge n1 n2))
-  (GET   "/calc-closeness" [] (graph/calc-closeness))
+  (GET   "/calc-closeness" [] (show-closeness))
   (GET   "/graph" [] (show-graph))
   (GET   "/reset" [] (graph/reset))
 )
