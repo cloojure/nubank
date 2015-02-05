@@ -47,7 +47,7 @@
 (defn closeness []
   (apply layout/common 
     (for [entry (graph/calc-closeness) ]
-      [:p (print-str entry) ]
+      [:h3 (print-str entry) ]
     )))
 
 (defn add-fraud
@@ -56,7 +56,7 @@
   (swap! graph/fraud-nodes conj node)
   (layout/common 
     [:h1 (str "Added Fraud node:" node)]
-    [:p (print-str "All fraud nodes:" graph/fraud-nodes)]
+    [:h2 (print-str "All fraud nodes:" @graph/fraud-nodes)]
   ))
 
 (defn fraud-nodes 
@@ -64,7 +64,7 @@
   []
   (layout/common 
     [:h1 "All fraud nodes:"]
-    [:p (print-str graph/fraud-nodes) ]
+    [:h2 (print-str @graph/fraud-nodes) ]
   ))
 
 (defn reset 
