@@ -11,6 +11,7 @@
   [n1 n2]
   (let [n1  (coolp/parse-int n1)
         n2  (coolp/parse-int n2) ]
+    (println "received: (add-edge" n1 n2 ")" )
     (layout/common 
       [:h1 "Add Edge" 
       [:p (format "n1: %3d" n1)]
