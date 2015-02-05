@@ -156,10 +156,10 @@
       -- (newline)
       -- (spyx (take 44 closeness-raw))
 
-    closeness-maps    (mapv #(hash-map :closeness %1  :node %2)  
-                            closeness-raw 
-                            (range (count closeness-raw)))
-    closeness-maps    (sort-by :closeness > closeness-maps)
+    closeness-maps    (sort-by :closeness > 
+                        (mapv #(hash-map :closeness %1  :node %2)  
+                              closeness-raw 
+                              (range (count closeness-raw))))
   ]
     (newline)
     (spyx (take 20 closeness-maps))

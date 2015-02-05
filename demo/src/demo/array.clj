@@ -74,33 +74,3 @@
       (print (format "%8s" (get-elem -array ii jj))))
     (newline)))
 
-
-;  (let [
-;    num-rows    3
-;    num-cols    4
-;    work        (make-array Long/TYPE num-rows num-cols)
-;  ]
-;    (println "start")
-;    (println "rows" (count work))
-;    (println "cols" (count (aget work 0)))
-;    (newline)
-;    (dotimes [ii num-rows]
-;      (dotimes [jj num-cols]
-;        (aset work ii jj  (+ (* 10 ii) jj))))
-;    (disp-array work)
-;    (println "done")
-;  )
-;
-; (defn is-array? [x] 
-;   (-> x class .isArray))
-; 
-; (defn disp-array [-array]
-;   (let [num-rows    (count -array)
-;         num-cols    (count (aget -array 0)) 
-;   ]
-;     (dotimes [ii num-rows]
-;       (do
-;         (dotimes [jj num-cols]
-;           (print (format "%4d" (aget -array ii jj))))
-;         (newline)))))
-
