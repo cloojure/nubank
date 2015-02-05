@@ -113,7 +113,7 @@
     )))
 )
 
-(deftest calc-penalty-t
+(deftest fraud-adjust-t
   (reset! demo.graph/fraud-nodes #{0})
   (let [node-dist       [ [0 1 2]
                           [1 0 1]
