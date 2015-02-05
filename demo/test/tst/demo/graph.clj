@@ -56,6 +56,22 @@
           (is (connected? nbr node))
         )))))
 
+(deftest calc-penalty-t
+  (let [node-dist   [ [0 1 2]
+                      [1 0 1]
+                      [2 1 0] ]
+  ]
+    (is (= 0.0  (calc-penalty node-dist 0 0)
+                (calc-penalty node-dist 1 1)
+                (calc-penalty node-dist 2 2)))
+    (is (= 0.5  (calc-penalty node-dist 0 1)
+                (calc-penalty node-dist 1 0)
+                (calc-penalty node-dist 1 2)
+                (calc-penalty node-dist 2 1)))
+    (is (= 0.75 (calc-penalty node-dist 0 2)
+                (calc-penalty node-dist 2 0)))
+  ))
+
 (deftest shortest-graph-t
   (println "shortest-graph-t #1")
   (let [text  " 0 1

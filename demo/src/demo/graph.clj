@@ -134,8 +134,7 @@
             (into [] (for [ii (range N)]
               (into [] (for [jj (range N)]
                 (int (darr/get-elem dist ii jj))))))
-    ]
-      result-array )))
+    ] result-array )))
 
 (s/defn closeness :- [s/Num]
   "Calculates the closeness for each node given the shortest-path array"
@@ -143,8 +142,21 @@
   (let [farness     (forv [ii  (range (array/num-rows spath)) ]
                       (apply + (spath ii)))
         closeness   (mapv #(/ 1 %) farness)
-  ]
-    closeness ))
+  ] closeness ))
+
+(defn calc-penalty
+  "Calculate the closeness score penalty for 2 nodes."
+  [node-dist n1 n2]
+    (let [dist      (array/get-elem node-dist n1 n2)
+          result    (as-> dist it
+                        (Math/pow 0.5 it)
+                        (- 1 it))
+    ] result ))
+
+(defn fraud-adjust
+  "Use node distance to adjust closeness for fraud"
+  [closeness-maps node-dist]
+  nil )
 
 (defn calc-closeness []
   (let [
@@ -160,11 +172,12 @@
                         (mapv #(hash-map :closeness %1  :node %2)  
                               closeness-raw 
                               (range (count closeness-raw))))
-  ]
-    (newline)
-    (spyx (take 20 closeness-maps))
-    closeness-maps 
-  ))
+    -- (newline)
+    -- (spyx (take 20 closeness-maps))
+
+    ; Apply fraud penalty
+    closeness-maps      (fraud-adjust closeness-maps spath)
+  ] closeness-maps ))
 
 (s/defn proc-fraud :- nil
   []
