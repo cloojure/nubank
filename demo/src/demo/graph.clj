@@ -36,11 +36,6 @@
   []
   (reset! graph (sorted-map)))
 
-(s/defn parse-edge :- Edge
-  "Parse a string of the form 'n1 n2', returning a vector like [n1 n2]" 
-  [line-str :- s/Str]
-  (mapv coolp/parse-int (re-seq #"\d+" line-str)))
-
 (s/defn num-edges :- s/Int
   "Returns the number of (symmetric) edges in the graph"
   []
@@ -64,25 +59,25 @@
   (@graph node))
 
 (s/defn connected? :- s/Bool
-  "Returns true if two nodes are connected by an edge."
+  "Returns true if two nodes exist in the graph and are connected by an edge."
   [ n1 :- Node
     n2 :- Node ]
-  {:pre [ (contains? @graph n1) 
-          (contains? @graph n2) ] }
-  (let [connected1   (contains? (neighbors n1) n2)
-        connected2   (contains? (neighbors n2) n1) 
-  ]
-    (assert (= connected1 connected2)) ; must be symmetric
-    connected1 ))
+  (if (and  (contains? @graph n1) 
+            (contains? @graph n2))
+    (let [connected1   (contains? (neighbors n1) n2)
+          connected2   (contains? (neighbors n2) n1) 
+    ]
+      (assert (= connected1 connected2)) ; must be symmetric
+      connected1 )))
+
+(s/defn parse-edge :- Edge
+  "Parse a string of the form 'n1 n2', returning a vector like [n1 n2]" 
+  [line-str :- s/Str]
+  (mapv coolp/parse-int (re-seq #"\d+" line-str)))
 
 (s/defn load-edges :- [Edge]
   [text :- s/Str]
-  (let [
-    edge-lines      (str/split-lines text)
-    edges           (mapv parse-edge edge-lines)
-  ]
-    (s/validate [Edge] edges)
-    edges ))
+  (mapv parse-edge (str/split-lines text)))
 
 (s/defn add-edge :- nil
   "Update an Graph with a new edge symmetrically n1->n2 and n2->n1"
