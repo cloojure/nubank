@@ -1,7 +1,7 @@
-(ns demo.handler-test
+(ns tst.demo.handler
+  (:use demo.handler)
   (:use clojure.test
-        ring.mock.request
-        demo.handler))
+        ring.mock.request))
 
 (deftest test-app
   (testing "main route"

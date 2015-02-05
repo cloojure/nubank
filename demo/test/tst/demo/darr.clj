@@ -1,4 +1,4 @@
-(ns demo.darr-test
+(ns tst.demo.darr
   (:use demo.darr)
   (:use clojure.test 
         cooljure.core ))

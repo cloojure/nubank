@@ -1,4 +1,4 @@
-(ns demo.array-test
+(ns tst.demo.array
   (:use demo.array)
   (:use clojure.test 
         cooljure.core )
