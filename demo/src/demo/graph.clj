@@ -150,18 +150,18 @@
             *show-status* true ]
     (let [
       text      (slurp edges-filename)
-      -- (println \newline "lines read:" (count (str/split-lines text)))
-      --        (load-graph text)
-      -- (println \newline "graph nodes:" (count @graph) "   edges:"   
-                  (as-> (vals @graph) it
-                        (mapv count it)
-                        (reduce + it)
-                        (/ it 2 )))
+        -- (println \newline "lines read:" (count (str/split-lines text)))
+        -- (load-graph text)
+        -- (println \newline "graph nodes:" (count @graph) "   edges:"   
+                    (as-> (vals @graph) it
+                          (mapv count it)
+                          (reduce + it)
+                          (/ it 2 )))
 
       spath     (shortest-path)
       cness     (closeness spath)
-      -- (newline)
-      -- (spyx (take 44 cness))
+        -- (newline)
+        -- (spyx (take 44 cness))
       cness     (sort-by :closeness > 
                   (mapv #(hash-map :closeness %1  :node %2)  
                         cness 
