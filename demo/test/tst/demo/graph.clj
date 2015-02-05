@@ -56,22 +56,6 @@
           (is (connected? nbr node))
         )))))
 
-(deftest calc-penalty-t
-  (let [node-dist   [ [0 1 2]
-                      [1 0 1]
-                      [2 1 0] ]
-  ]
-    (is (= 0.0  (calc-penalty node-dist 0 0)
-                (calc-penalty node-dist 1 1)
-                (calc-penalty node-dist 2 2)))
-    (is (= 0.5  (calc-penalty node-dist 0 1)
-                (calc-penalty node-dist 1 0)
-                (calc-penalty node-dist 1 2)
-                (calc-penalty node-dist 2 1)))
-    (is (= 0.75 (calc-penalty node-dist 0 2)
-                (calc-penalty node-dist 2 0)))
-  ))
-
 (deftest shortest-graph-t
   (println "shortest-graph-t #1")
   (let [text  " 0 1
@@ -127,5 +111,53 @@
       (is (= spath target))
       (is (= cness cness-t))
     )))
+)
+
+(deftest calc-penalty-t
+  (reset! demo.graph/fraud-nodes #{0})
+  (let [node-dist       [ [0 1 2]
+                          [1 0 1]
+                          [2 1 0] ]
+      closeness-maps    [ {:node 0 :closeness 1/3} 
+                          {:node 1 :closeness 1/2}
+                          {:node 2 :closeness 1/3} ]
+      closeness-fraud   (fraud-adjust closeness-maps node-dist)
+
+      closeness-goal    [ {:node 0 :closeness 0.0} 
+                          {:node 1 :closeness 0.25}
+                          {:node 2 :closeness 0.25} ]
+  ]
+    (is (= closeness-fraud closeness-goal))
+  )
+
+  (reset! demo.graph/fraud-nodes #{0})
+  (let [node-dist       [ [0 1 1 1 2 2]
+                          [1 0 1 2 3 3]
+                          [1 1 0 2 3 3]
+                          [1 2 2 0 1 1]
+                          [2 3 3 1 0 1]
+                          [2 3 3 1 1 0] ]
+      closeness-maps    [ {:node 0 :closeness 1/7 }
+                          {:node 1 :closeness 1/10}
+                          {:node 2 :closeness 1/10}
+                          {:node 3 :closeness 1/7 }
+                          {:node 4 :closeness 1/10}
+                          {:node 5 :closeness 1/10}
+                          ]
+      closeness-fraud   (fraud-adjust closeness-maps node-dist)
+
+      closeness-goal    [ {:node 0 :closeness 0.0 } 
+                          {:node 1 :closeness 1/20}
+                          {:node 2 :closeness 1/20} 
+                          {:node 3 :closeness 1/14} 
+                          {:node 4 :closeness 0.075} 
+                          {:node 5 :closeness 0.075} ]
+
+    fraud-vals      (mapv #(double (:closeness %)) closeness-fraud)
+    goal-vals       (mapv #(double (:closeness %)) closeness-goal)
+    success         (mapv #(rel= %1 %2 :digits 5)  fraud-vals goal-vals)
+  ]
+    (is (every? truthy? success))
+  )
 )
 

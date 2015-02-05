@@ -156,7 +156,13 @@
 (defn fraud-adjust
   "Use node distance to adjust closeness for fraud"
   [closeness-maps node-dist]
-  nil )
+  (into []
+    (for [node-map closeness-maps]
+      (let [penalties         (mapv   #(calc-penalty node-dist (:node node-map) %)
+                                      @fraud-nodes)
+            total-penalty     (apply * penalties)
+      ] 
+        (update-in node-map [:closeness] * total-penalty)))))
 
 (defn calc-closeness []
   (let [
