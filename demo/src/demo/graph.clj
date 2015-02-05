@@ -166,14 +166,8 @@
 
 (defn calc-closeness []
   (let [
-    spath             (shortest-path)
-      -- (newline)
-      -- (println "Shortest path:")
-      -- (array/disp spath)
-    closeness-raw     (closeness spath)
-      -- (newline)
-      -- (spyx (take 44 closeness-raw))
-
+    node-dist         (shortest-path)
+    closeness-raw     (closeness node-dist)
     closeness-maps    (sort-by :closeness > 
                         (mapv #(hash-map :closeness %1  :node %2)  
                               closeness-raw 
@@ -181,14 +175,9 @@
     -- (newline)
     -- (spyx (take 20 closeness-maps))
 
-    ; Apply fraud penalty
-    closeness-maps      (fraud-adjust closeness-maps spath)
+    closeness-maps      (fraud-adjust closeness-maps node-dist)
   ] closeness-maps ))
 
-(s/defn proc-fraud :- nil
-  []
-  nil
-)
 
 (defn -main []
   (binding [*spy* false
