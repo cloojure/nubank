@@ -12,9 +12,6 @@
 
 (s/set-fn-validation! true)
 
-(def ^:dynamic *spy* false)
-(def ^:dynamic *show-status* false)
-
 (def edges-filename "edges.txt")
 (def edges-filename "edges-full.txt")
 
@@ -107,32 +104,28 @@
     (assert (= connected1 connected2)) ; must be symmetric
     connected1 ))
 
-(s/defn parse-edge :- Edge
-  "Parse a string of the form 'n1 n2', returning a vector like [n1 n2]" 
-  [line-str :- s/Str]
-  (mapv coolp/parse-int (re-seq #"\d+" line-str)))
-
-(s/defn load-edges :- [Edge]
-  [file-str :- s/Str]
-  (mapv parse-edge (str/split-lines file-str)))
-
-(s/defn add-edge :- nil
-  "Update an Graph with a new edge symmetrically n1->n2 and n2->n1"
-  [ [n1 n2] :- Edge ]
-  (swap! state update-in [:graph n1]  (fnil conj (sorted-set))  n2)
-  (swap! state update-in [:graph n2]  (fnil conj (sorted-set))  n1))
+(s/defn add-edge
+  [id-1 :- s/Str
+   id-2 :- s/Str ]
+  (let [n1  (node-idx id-1)
+        n2  (node-idx id-2) ] 
+    ; Update graph with a new edge symmetrically n1->n2 and n2->n1
+    (swap! state update-in [:graph n1]  (fnil conj (sorted-set))  n2)
+    (swap! state update-in [:graph n2]  (fnil conj (sorted-set))  n1)))
 
 (s/defn load-graph :- nil
+  "For each line in a file-string, parse a space-delimited string of the form 
+  ' id-1 id-2 '.  Add the edge defined by [id-1 id-2] to the graph using zero-based
+  indexing."
   [file-str :- s/Str]
-  (let [edges       (load-edges file-str)
-        --          (doseq [edge edges] (add-edge edge))
-        edge-sets   (mapv #(into (sorted-set) %) edges)
-        edge-freqs  (frequencies edge-sets)
-        edge-dups   (filter #(< 1 (val %)) edge-freqs)
-  ]
-    (newline)
-    (println (str "load-graph:  duplicate edges (" (count edge-dups) "):")
-                edge-dups)
+  (let [file-lines      (str/split-lines file-str) ]
+    (doseq [line-str    file-lines]
+      (let [edge-ids    (re-seq #"\S+" line-str) ]
+        (assert (= 2 (count edge-ids)))
+        (add-edge   (first  edge-ids)
+                    (second edge-ids) )))
+    (println (format "load-graph:  lines read: %d   edges saved: %d"
+                (count file-lines) (num-edges)))
   ))
 
 (s/defn shortest-path :- array/Array
@@ -205,19 +198,10 @@
   ] result ))
 
 (defn -main []
-  (binding [*spy* false
-            *show-status* true ]
-    (let [
-      text      (slurp edges-filename)
-        -- (println \newline "lines read:" (count (str/split-lines text)))
-        -- (load-graph text)
-        -- (println \newline "graph nodes:" (count (@state :graph)) "   edges:"   
-                    (as-> (vals (@state :graph)) it
-                          (mapv count it)
-                          (reduce + it)
-                          (/ it 2 )))
-    ]
-      (newline)
-      (println "top nodes by closeness:" (take 20 (sorted-closeness)))
-    )))
+  (let [text  (slurp edges-filename) ]
+    (load-graph text)
+    (println \newline "graph nodes:" (count (all-nodes)))
+    (newline)
+    (println "top nodes by closeness:" (take 20 (sorted-closeness)))
+  ))
     

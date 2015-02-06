@@ -26,52 +26,48 @@
   (is (= 5 (node-idx :y )))
 )
 
-(deftest parse-edge-t
-  (is (= [1 2]              (parse-edge " 1 2 " )))
-  (is (= [123 45]           (parse-edge "123 45" )))
-  (is (thrown? Exception    (parse-edge " 1 2 3 " )))
-  (is (thrown? Exception    (parse-edge [1 2] )))
-)
-
 (deftest add-edge-t
   (reset)
-  (add-edge [1 2])
-  (is (= { 1 #{2}
-           2 #{1} }
+  (load-graph "0 1")
+  (is (= { 0 #{1}
+           1 #{0} }
          (get-graph)))
   
   (reset)
-  (doseq [edge  [[1 2] [2 3]]] 
-    (add-edge edge))
-  (is (= { 1 #{2}
+  (load-graph "a b")
+  (is (= { 0 #{1}
+           1 #{0} }
+         (get-graph)))
+  
+  (reset)
+  (load-graph   "a b
+                 b c")
+  (is (= { 0 #{1}
+           1 #{0 2}
+           2 #{1} }
+         (get-graph)))
+
+  (reset)
+  (load-graph   "0 1
+                 1 2
+                 1 3
+                 2 3
+                 3 4" )
+  (is (= { 0 #{1}
+           1 #{0 2 3}
            2 #{1 3}
-           3 #{2} }
+           3 #{1 2 4}
+           4 #{3} }
          (get-graph)))
-
-  (reset)
-  (doseq [edge [[1 2] [2 3] [2 4] [3 4] [4 5]]]
-    (add-edge edge))
-  (is (= { 1 #{2}
-           2 #{1 3 4}
-           3 #{2 4}
-           4 #{2 3 5}
-           5 #{4} }
-         (get-graph)))
-)
-
-(deftest symmetry-t
-  (reset)
-  (doseq [edge [[1 2] [2 3] [2 4] [3 4] [4 5]]]
-    (add-edge edge))
   (let [nodes (all-nodes) ]
-    (is (= nodes #{1 2 3 4 5}))
+    (is (= nodes #{0 1 2 3 4}))
     (doseq [node nodes]
-      (do
-        (is (contains? (get-graph) node))
-        (doseq [nbr (neighbors node)]
-          (is (connected? node nbr))
-          (is (connected? nbr node))
-        )))))
+      (is (contains? (get-graph) node))
+      (doseq [nbr (neighbors node)]
+        (is (connected? node nbr))
+        (is (connected? nbr node))
+      )))
+)
 
 (deftest add-fraud-t
   (reset)

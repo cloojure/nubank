@@ -14,21 +14,18 @@
     (let [response (app (request :get "/add-edge/3/4"))]
       (is (= (:status response) 200))
       (is (re-find #"Added Edge"    (:body response)))
-      (is (re-find #"n1=3"          (:body response)))
-      (is (re-find #"n2=4"          (:body response)))
-    ))
+      (is (re-find #"id-1=3"          (:body response)))
+      (is (re-find #"id-2=4"          (:body response)))))
 
-  (testing "add-edge bad"
+  (testing "add-edge unusual"
     (let [uri-path  "/add-edge/-1/4"
           response  (app (request :get uri-path)) ]
-      ; (is (= (:status response) 404))  #todo
-        (is (re-find #"Error"  (:body response))))
+      (is (re-find #"Added Edge"    (:body response))))
     (let [uri-path  "/add-edge/1/999"
           response  (app (request :get uri-path)) ]
-      ; (is (= (:status response) 404))  #todo
-        (is (re-find #"Error"  (:body response))))
-  )
+      (is (re-find #"Added Edge"    (:body response)))))
 
   (testing "not-found route"
     (let [response (app (request :get "/invalid"))]
-      (is (= (:status response) 404)))))
+      (is (= (:status response) 404))))
+)

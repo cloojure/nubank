@@ -10,27 +10,15 @@
   (layout/common [:h1 "Hello World!"]))
 
 (defn add-edge 
-  [n1 n2]
-  (let [n1  (coolp/parse-int n1)
-        n2  (coolp/parse-int n2) ]
-    (println "received: (add-edge" n1 n2 ")" )
-    (if (and (<= 0 n1 500) (<= 0 n2 500))
-      (do 
-        (graph/add-edge [n1 n2] )
-        (layout/common 
-          [:h1 "Added Edge" 
-            [:p (format "n1=%d" n1)]
-            [:p (format "n2=%d" n2)]
-          ] ))
-      (do 
-        ; #todo add error response code
-        (layout/common 
-          [:h1 "Error - Invalid Node Values" 
-            [:p "Node values must be in the range [0 <= node <= 500]"]
-            [:p (format "n1=%d" n1)]
-            [:p (format "n2=%d" n2)]
-          ] ))
-    )))
+  [id-1 id-2]
+  (println "received: (add-edge" id-1 id-2 ")" )
+  (do 
+    (graph/add-edge id-1 id-2)
+    (layout/common 
+      [:h1 "Added Edge" 
+        [:p (format "id-1=%s" id-1)]
+        [:p (format "id-2=%s" id-2)]
+      ] )))
 
 (defn show-graph []
   (if (< 0 (count (graph/all-nodes)))
