@@ -83,4 +83,4 @@ To start a web server for the application, execute the following in a spare wind
 
 image:http://clojars.org/cooljure/latest-version.svg[ http://clojars.org/cooljure ]
 
-image:http://github.com/cloojure/nubank/blob/master/demo/snaps/snap1.png[]
+image:snaps/snap1.png[]
