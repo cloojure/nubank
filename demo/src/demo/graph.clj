@@ -1,6 +1,7 @@
 (ns demo.graph
   (:require
     [clojure.string     :as str]
+    [clojure.set        :as set]
     [cooljure.parse     :as coolp]
     [demo.array         :as array]
     [demo.darr          :as darr]
@@ -191,8 +192,9 @@
 (defn sorted-closeness []
   (let [
     closeness   (calc-closeness)
+    idx->node   (set/map-invert (@state :node->idx))
     result      (sort-by :closeness > 
-                  (mapv #(hash-map :closeness %1  :node %2)  
+                  (mapv #(hash-map :closeness %1  :node (idx->node %2))
                         closeness 
                         (range (count closeness))))
   ] result ))
