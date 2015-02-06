@@ -1,5 +1,8 @@
-#!/bin/zsh -v
+#!/bin/bash -v
 
+curl localhost:3000/reset       # clear out system state
+
+# add test graph nodes
 curl localhost:3000/add-edge/0/1
 curl localhost:3000/add-edge/1/2
 curl localhost:3000/add-edge/2/0
