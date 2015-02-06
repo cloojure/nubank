@@ -56,27 +56,25 @@
           (is (connected? nbr node))
         )))))
 
-(deftest shortest-graph-t
+(deftest shortest-path-t
+  (demo.graph/reset)
   (let [text  " 0 1
                 1 2"
+        -- (load-graph text)
+        spath     (shortest-path)
+        spath-t   [ [0 1 2]
+                    [1 0 1]
+                    [2 1 0] ]
+
+        cness    (calc-closeness)          
+        cness-t  [1/3 1/2 1/3]
   ]
-  (binding [*spy* true]
-    (demo.graph/reset)
-    (load-graph text)
-    (let [
-      spath     (shortest-path)
+    (is (array/symmetric? spath))
+    (is (= spath spath-t))
+    (is (= cness cness-t))
+  )
 
-      target    [ [0 1 2]
-                  [1 0 1]
-                  [2 1 0] ]
-      cness    (closeness spath)          
-      cness-t  [1/3 1/2 1/3]
-    ]
-      (is (array/symmetric? spath))
-      (is (= spath target))
-      (is (= cness cness-t))
-    )))
-
+  (demo.graph/reset)
   (let [text  " 0 1 
                 1 2 
                 2 0 
@@ -84,25 +82,22 @@
                 3 4 
                 4 5 
                 5 3"
+        -- (load-graph text)
+        spath     (shortest-path)
+        spath-t   [ [0 1 1 1 2 2]
+                    [1 0 1 2 3 3]
+                    [1 1 0 2 3 3]
+                    [1 2 2 0 1 1]
+                    [2 3 3 1 0 1]
+                    [2 3 3 1 1 0] ]
+
+        cness     (calc-closeness)
+        cness-t   [1/7 1/10 1/10 1/7 1/10 1/10]
   ]
-  (binding [*spy* true]
-    (demo.graph/reset)
-    (load-graph text)
-    (let [
-      spath     (shortest-path)
-      target    [ [0 1 1 1 2 2]
-                  [1 0 1 2 3 3]
-                  [1 1 0 2 3 3]
-                  [1 2 2 0 1 1]
-                  [2 3 3 1 0 1]
-                  [2 3 3 1 1 0] ]
-      cness     (closeness spath)
-      cness-t   [1/7 1/10 1/10 1/7 1/10 1/10]
-    ]
-      (is (array/symmetric? spath))
-      (is (= spath target))
-      (is (= cness cness-t))
-    )))
+    (is (array/symmetric? spath))
+    (is (= spath spath-t))
+    (is (= cness cness-t))
+  )
 )
 
 (deftest fraud-adjust-t
@@ -110,14 +105,9 @@
   (let [node-dist       [ [0 1 2]
                           [1 0 1]
                           [2 1 0] ]
-      closeness-maps    [ {:node 0 :closeness 1/3} 
-                          {:node 1 :closeness 1/2}
-                          {:node 2 :closeness 1/3} ]
-      closeness-fraud   (fraud-adjust closeness-maps node-dist)
-
-      closeness-goal    [ {:node 0 :closeness 1/3} 
-                          {:node 1 :closeness 1/2}
-                          {:node 2 :closeness 1/3} ]
+      closeness-raw     [1/3 1/2 1/3]
+      closeness-fraud   (fraud-adjust closeness-raw node-dist)
+      closeness-goal    [1/3 1/2 1/3]
   ]
     (is (= closeness-fraud closeness-goal))
   )
@@ -126,14 +116,9 @@
   (let [node-dist       [ [0 1 2]
                           [1 0 1]
                           [2 1 0] ]
-      closeness-maps    [ {:node 0 :closeness 1/3} 
-                          {:node 1 :closeness 1/2}
-                          {:node 2 :closeness 1/3} ]
-      closeness-fraud   (fraud-adjust closeness-maps node-dist)
-
-      closeness-goal    [ {:node 0 :closeness 0.0} 
-                          {:node 1 :closeness 0.25}
-                          {:node 2 :closeness 0.25} ]
+      closeness-raw     [1/3 1/2 1/3]
+      closeness-fraud   (fraud-adjust closeness-raw node-dist)
+      closeness-goal    [0.0 0.25 0.25]
   ]
     (is (= closeness-fraud closeness-goal))
   )
@@ -145,25 +130,10 @@
                           [1 2 2 0 1 1]
                           [2 3 3 1 0 1]
                           [2 3 3 1 1 0] ]
-      closeness-maps    [ {:node 0 :closeness 1/7 }
-                          {:node 1 :closeness 1/10}
-                          {:node 2 :closeness 1/10}
-                          {:node 3 :closeness 1/7 }
-                          {:node 4 :closeness 1/10}
-                          {:node 5 :closeness 1/10}
-                          ]
-      closeness-fraud   (fraud-adjust closeness-maps node-dist)
-
-      closeness-goal    [ {:node 0 :closeness 1/7 } 
-                          {:node 1 :closeness 1/10}
-                          {:node 2 :closeness 1/10} 
-                          {:node 3 :closeness 1/7 } 
-                          {:node 4 :closeness 1/10} 
-                          {:node 5 :closeness 1/10} ]
-
-    fraud-vals      (mapv #(double (:closeness %)) closeness-fraud)
-    goal-vals       (mapv #(double (:closeness %)) closeness-goal)
-    success         (mapv #(rel= %1 %2 :digits 5)  fraud-vals goal-vals)
+      closeness-raw     [1/7 1/10 1/10 1/7 1/10 1/10 ]
+      closeness-fraud   (fraud-adjust closeness-raw node-dist)
+      closeness-goal    [1/7 1/10 1/10 1/7 1/10 1/10 ]
+      success           (mapv #(rel= %1 %2 :digits 5)  closeness-fraud closeness-goal)
   ]
     (is (every? truthy? success))
   )
@@ -175,25 +145,10 @@
                           [1 2 2 0 1 1]
                           [2 3 3 1 0 1]
                           [2 3 3 1 1 0] ]
-      closeness-maps    [ {:node 0 :closeness 1/7 }
-                          {:node 1 :closeness 1/10}
-                          {:node 2 :closeness 1/10}
-                          {:node 3 :closeness 1/7 }
-                          {:node 4 :closeness 1/10}
-                          {:node 5 :closeness 1/10}
-                          ]
-      closeness-fraud   (fraud-adjust closeness-maps node-dist)
-
-      closeness-goal    [ {:node 0 :closeness 0.0 } 
-                          {:node 1 :closeness 1/20}
-                          {:node 2 :closeness 1/20} 
-                          {:node 3 :closeness 1/14} 
-                          {:node 4 :closeness 0.075} 
-                          {:node 5 :closeness 0.075} ]
-
-    fraud-vals      (mapv #(double (:closeness %)) closeness-fraud)
-    goal-vals       (mapv #(double (:closeness %)) closeness-goal)
-    success         (mapv #(rel= %1 %2 :digits 5)  fraud-vals goal-vals)
+      closeness-raw     [ 1/7  1/10 1/10 1/7  1/10  1/10 ]
+      closeness-fraud   (fraud-adjust closeness-raw node-dist)
+      closeness-goal    [ 0.0  1/20 1/20 1/14 0.075 0.075 ]
+      success           (mapv #(rel= %1 %2 :digits 5)  closeness-fraud closeness-goal)
   ]
     (is (every? truthy? success))
   )
@@ -205,9 +160,17 @@
                 1 2"
         -- (load-graph text)
         cness           (calc-closeness)          
-        cness-goal      [ {:node 0 :closeness 1/3} 
-                          {:node 1 :closeness 1/2}
-                          {:node 2 :closeness 1/3} ]
+        cness-goal      [1/3 1/2 1/3]
+  ]
+    (is (= cness cness-goal)))
+
+  (demo.graph/reset)
+  (reset! demo.graph/fraud-nodes #{0})
+  (let [text  " 0 1
+                1 2"
+        -- (load-graph text)
+        cness           (calc-closeness)          
+        cness-goal      [0.0 0.25 0.25]
   ]
     (is (= cness cness-goal)))
 
@@ -221,13 +184,25 @@
                 5 3"
         -- (load-graph text)
         cness           (calc-closeness)
-        cness-goal      [ {:node 0 :closeness 1/7 } 
-                          {:node 1 :closeness 1/10}
-                          {:node 2 :closeness 1/10} 
-                          {:node 3 :closeness 1/7 } 
-                          {:node 4 :closeness 1/10} 
-                          {:node 5 :closeness 1/10} ]
+        cness-goal      [1/7 1/10 1/10 1/7 1/10 1/10 ]
+        success         (mapv #(rel= %1 %2 :digits 5)  cness cness-goal)
+  ]
+    (is (every? truthy? success)))
+
+  (demo.graph/reset)
+  (reset! demo.graph/fraud-nodes #{0})
+  (let [text  " 0 1 
+                1 2 
+                2 0 
+                0 3 
+                3 4 
+                4 5 
+                5 3"
+        -- (load-graph text)
+        cness           (calc-closeness)
+        cness-goal      [ 0.0  1/20 1/20 1/14 0.075 0.075 ]
+        success         (mapv #(rel= %1 %2 :digits 5)  cness cness-goal)
       ]
-        (is (= cness cness-goal)))
+    (is (every? truthy? success)))
 )
 

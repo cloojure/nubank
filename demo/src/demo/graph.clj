@@ -58,9 +58,8 @@
 (s/defn all-nodes :- #{Node}
   "Returns a set of all nodes in the graph"
   []
-  (spy :msg "all-nodes result:"
   (into (sorted-set)
-      (keys @graph))))
+      (keys @graph)))
 
 (s/defn neighbors :- #{Node}
   "Returns the set of the neighbors for a node"
@@ -103,8 +102,9 @@
         edge-freqs  (frequencies edge-sets)
         edge-dups   (filter #(< 1 (val %)) edge-freqs)
   ]
-    (println "Duplicate Edges:  Count =" (count edge-dups))
-    (println "   Values =" edge-dups)
+    (newline)
+    (println (str "load-graph:  duplicate edges (" (count edge-dups) "):")
+                edge-dups)
   ))
 
 (s/defn shortest-path :- array/Array
@@ -136,48 +136,44 @@
                 (int (darr/get-elem dist ii jj))))))
     ] result-array )))
 
-(s/defn closeness :- [s/Num]
-  "Calculates the closeness for each node given the shortest-path array"
-  [spath :- array/Array]
-  (let [farness     (forv [ii  (range (array/num-rows spath)) ]
-                      (apply + (spath ii)))
-        closeness   (mapv #(/ 1 %) farness)
-  ] closeness ))
-
-(defn calc-penalty
+(s/defn calc-penalty :- s/Num
   "Calculate the closeness score penalty for 2 nodes."
-  [node-dist n1 n2]
+  [ node-dist   :- array/Array
+    n1          :- Node
+    n2          :- Node ]
     (let [dist      (array/get-elem node-dist n1 n2)
-          result    (as-> dist it
-                        (Math/pow 0.5 it)
-                        (- 1 it))
-    ] result ))
+          penalty   (- 1 (Math/pow 0.5 dist))
+    ] penalty ))
 
-(defn fraud-adjust
+(s/defn fraud-adjust :- [s/Num]
   "Use node distance to adjust closeness for fraud"
-  [closeness-maps node-dist]
+  [ closeness   :- [s/Num]
+    node-dist   :- array/Array ]
   (into []
-    (for [node-map closeness-maps]
-      (let [penalties         (mapv   #(calc-penalty node-dist (:node node-map) %)
+    (for [node-idx (range (count closeness))]
+      (let [penalties         (mapv   #(calc-penalty node-dist node-idx %)
                                       @fraud-nodes)
             total-penalty     (apply * penalties)
       ] 
-        (update-in node-map [:closeness] * total-penalty)))))
+        (* (closeness node-idx) total-penalty)))))
 
 (defn calc-closeness []
   (let [
-    node-dist         (shortest-path)
-    closeness-raw     (closeness node-dist)
-    closeness-maps    (sort-by :closeness > 
-                        (mapv #(hash-map :closeness %1  :node %2)  
-                              closeness-raw 
-                              (range (count closeness-raw))))
-    -- (newline)
-    -- (spyx (take 20 closeness-maps))
+    node-dist       (shortest-path)
+    farness         (forv [ii  (range (array/num-rows node-dist)) ]
+                      (apply + (node-dist ii)))
+    closeness-raw   (mapv #(/ 1 %) farness)
+    result          (fraud-adjust closeness-raw node-dist)
+  ] result ))
 
-    closeness-maps      (fraud-adjust closeness-maps node-dist)
-  ] closeness-maps ))
-
+(defn sorted-closeness []
+  (let [
+    closeness   (calc-closeness)
+    result      (sort-by :closeness > 
+                      (mapv #(hash-map :closeness %1  :node %2)  
+                            closeness 
+                            (range (count closeness))))
+  ] result ))
 
 (defn -main []
   (binding [*spy* false
