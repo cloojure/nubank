@@ -99,8 +99,8 @@
   (mapv coolp/parse-int (re-seq #"\d+" line-str)))
 
 (s/defn load-edges :- [Edge]
-  [text :- s/Str]
-  (mapv parse-edge (str/split-lines text)))
+  [file-str :- s/Str]
+  (mapv parse-edge (str/split-lines file-str)))
 
 (s/defn add-edge :- nil
   "Update an Graph with a new edge symmetrically n1->n2 and n2->n1"
@@ -109,8 +109,8 @@
   (swap! state update-in [:graph n2]  (fnil conj (sorted-set))  n1))
 
 (s/defn load-graph :- nil
-  [text :- s/Str]
-  (let [edges       (load-edges text)
+  [file-str :- s/Str]
+  (let [edges       (load-edges file-str)
         --          (doseq [edge edges] (add-edge edge))
         edge-sets   (mapv #(into (sorted-set) %) edges)
         edge-freqs  (frequencies edge-sets)
