@@ -121,7 +121,7 @@ localhost:3000:/add-edge/3/99
 ----
 Note that the node id's are just strings and need not be consecutive numbers.  The string
 id is converted to an internal zero-based index (visible at the /graph URI), and we could
-have even used an id like "***new-node***" if we had wanted instead of "99".  After
+have even used an id like "Joe" if we had wanted instead of "99".  After
 visiting both of the above URLs, return to the /graph URI to see:
 image:snaps/snap4.png[]
 
@@ -161,7 +161,7 @@ localhost:3000:/reset
 ----
 and you may then use the /add-edge/id-1/id-2 URI to create any graph desired.
 
-Returning to the command window, lets load in the edges for the full NuBank graph:
+Returning to the command window, let's load in the edges for the full NuBank graph:
 ----
 > go-full.bash 
 ----
@@ -179,6 +179,11 @@ image:snaps/snap11.png[]
 
 and we observe that node-id 44 has moved from the top to the bottom of the rankings.
 
+== Other Notes
+
+I first tested the app from the command line using "lein test" & "lein run" rather than
+using the browser, and noticed that I ended up with fewer edges in the graph than lines in
+the original text edges file.  If you go to the command window and use "lein run", you'll see:
 ----
 > lein run
 Initializing system state...
@@ -186,6 +191,20 @@ load-graph:  lines read: 945   edges saved: 898
 
  graph nodes: 100
 ----
+
+where the output indicates that 945 edge lines were read from the text file
+"edges-full.txt", but only 898 edges were saved in the graph.  This is because the balance
+of 47 edges were duplicated and therefore ignored (since this is a "social network" of
+friends, we assume that all edges are bi-directional and not uni-directional like Twitter
+followers).
+
+
+== Wrapping Up
+
+That is all I can think of to include at this time.  If you have any questions or would like to see something else added or changed, please send off a quick email and I'll look at it right away!  
+
+Bye for now,
+Alan
 
 
 
