@@ -113,3 +113,10 @@ localhost:3000:/closeness
 ----
 which displays:
   image:snaps/snap3.png[]
+
+We can add a new edge using a URLs like:
+----
+localhost:3000:/add-edge/0/99
+localhost:3000:/add-edge/3/99
+----
+
