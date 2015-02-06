@@ -41,13 +41,12 @@
 (defn add-fraud
   "Add a node to the fraudulent list, returning the list"
   [node]
-  (let [node (coolp/parse-int node) ]
-    (println "Added Fraud node:" node)
-    (graph/add-fraud node)
-    (layout/common 
-      [:h1 (str "Added Fraud node:" node)]
-      [:h2 (print-str "All fraud nodes:" (graph/get-fraud-nodes))]
-    )))
+  (println "Added Fraud node:" node)
+  (graph/add-fraud node)
+  (layout/common 
+    [:h1 (str "Added Fraud node:" node)]
+    [:h2 (print-str "All fraud nodes:" (graph/get-fraud-nodes))]
+  ))
 
 (defn fraud-nodes 
   "Returns a list of all fraud nodes"

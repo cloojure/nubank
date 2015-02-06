@@ -69,8 +69,8 @@
   (@state :fraud-nodes))
 
 (s/defn add-fraud :- nil
-  [node :- Node]
-  (swap! state update-in [:fraud-nodes] conj node))
+  [node :- s/Str]
+  (swap! state update-in [:fraud-nodes] conj (node-idx node)))
 
 (s/defn num-edges :- s/Int
   "Returns the number of (symmetric) edges in the graph"
@@ -181,11 +181,16 @@
         (* (closeness node-idx) total-penalty)))))
 
 (defn calc-closeness []
+  (newline)
+  (println "calc-closeness")
   (let [
     node-dist       (shortest-path)
-    farness         (forv [ii  (range (array/num-rows node-dist)) ]
+    -- (spyx node-dist)
+    farness         (forv [ii  (range (count (all-nodes))) ]
                       (apply + (node-dist ii)))
+    -- (spyx farness)
     closeness-raw   (mapv #(/ 1 %) farness)
+    -- (spyx closeness-raw)
     result          (fraud-adjust closeness-raw node-dist)
   ] result ))
 
