@@ -81,5 +81,4 @@ To start a web server for the application, execute the following in a spare wind
 
     lein ring server
 
-image:snaps/snap1.png
-
+image:https://github.com/cloojure/nubank/blob/master/demo/snaps
