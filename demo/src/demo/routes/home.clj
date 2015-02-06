@@ -33,9 +33,9 @@
     )))
 
 (defn show-graph []
-  (if (< 0 (count (@graph/state :graph)))
-    (let [out     (for [entry (@graph/state :graph) ]
-                    [:h3 (print-str entry) ] )
+  (if (< 0 (count (graph/all-nodes)))
+    (let [out   (for [entry (graph/get-graph) ]
+                  [:h3 (print-str entry) ] )
     ]
       (apply layout/common out)
     )
@@ -58,7 +58,7 @@
     (graph/add-fraud node)
     (layout/common 
       [:h1 (str "Added Fraud node:" node)]
-      [:h2 (print-str "All fraud nodes:" (@graph/state :fraud-nodes))]
+      [:h2 (print-str "All fraud nodes:" (graph/get-fraud-nodes))]
     )))
 
 (defn fraud-nodes 
@@ -66,7 +66,7 @@
   []
   (layout/common 
     [:h1 "All fraud nodes:"]
-    [:h2 (print-str (@graph/state :fraud-nodes)) ]
+    [:h2 (print-str (graph/get-fraud-nodes)) ]
   ))
 
 (defn reset 
@@ -76,7 +76,7 @@
   (layout/common 
     [:h1 "System reset performed"]
     [:h2 (print-str "Nodes:" (count (graph/all-nodes))) ]
-    [:h2 (print-str "Fraud Nodes:" (count (@graph/state :fraud-nodes))) ]
+    [:h2 (print-str "Fraud Nodes:" (count (graph/get-fraud-nodes))) ]
   ))
 
 (defroutes home-routes

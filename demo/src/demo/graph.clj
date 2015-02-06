@@ -38,6 +38,16 @@
     :fraud-nodes    nil ; A set of nodes flagged as fraudulent
   } ))
 
+(s/defn get-graph :- Graph
+  "Returns the current graph"
+  []
+  (@state :graph))
+
+(s/defn get-fraud-nodes :- #{Node}
+  "Returns a list of fraud nodes."
+  []
+  (@state :fraud-nodes))
+
 (s/defn add-fraud :- nil
   [node :- Node]
   (swap! state update-in [:fraud-nodes] conj node))

@@ -17,21 +17,21 @@
 )
 
 (deftest add-edge-t
-  (demo.graph/reset)
+  (reset)
   (add-edge [1 2])
   (is (= { 1 #{2}
            2 #{1} }
-         (@state :graph)))
+         (get-graph)))
   
-  (demo.graph/reset)
+  (reset)
   (doseq [edge  [[1 2] [2 3]]] 
     (add-edge edge))
   (is (= { 1 #{2}
            2 #{1 3}
            3 #{2} }
-         (@state :graph)))
+         (get-graph)))
 
-  (demo.graph/reset)
+  (reset)
   (doseq [edge [[1 2] [2 3] [2 4] [3 4] [4 5]]]
     (add-edge edge))
   (is (= { 1 #{2}
@@ -39,25 +39,34 @@
            3 #{2 4}
            4 #{2 3 5}
            5 #{4} }
-         (@state :graph)))
+         (get-graph)))
 )
 
 (deftest symmetry-t
-  (demo.graph/reset)
+  (reset)
   (doseq [edge [[1 2] [2 3] [2 4] [3 4] [4 5]]]
     (add-edge edge))
   (let [nodes (all-nodes) ]
     (is (= nodes #{1 2 3 4 5}))
     (doseq [node nodes]
       (do
-        (is (contains? (@state :graph) node))
+        (is (contains? (get-graph) node))
         (doseq [nbr (neighbors node)]
           (is (connected? node nbr))
           (is (connected? nbr node))
         )))))
 
+(deftest add-fraud-t
+  (reset)
+  (is (= #{} (get-fraud-nodes)))
+
+  (add-fraud 0)
+  (add-fraud 99)
+  (is (= #{0 99} (get-fraud-nodes)))
+)
+
 (deftest shortest-path-t
-  (demo.graph/reset)
+  (reset)
   (let [text  " 0 1
                 1 2"
         -- (load-graph text)
@@ -74,7 +83,7 @@
     (is (= cness cness-t))
   )
 
-  (demo.graph/reset)
+  (reset)
   (let [text  " 0 1 
                 1 2 
                 2 0 
@@ -101,7 +110,7 @@
 )
 
 (deftest fraud-adjust-t
-  (demo.graph/reset)
+  (reset)
   (let [node-dist       [ [0 1 2]
                           [1 0 1]
                           [2 1 0] ]
@@ -112,7 +121,8 @@
     (is (= closeness-fraud closeness-goal))
   )
 
-  (demo.graph/reset)
+  (reset)
+  (add-fraud 0)
   (let [node-dist       [ [0 1 2]
                           [1 0 1]
                           [2 1 0] ]
@@ -123,7 +133,7 @@
     (is (= closeness-fraud closeness-goal))
   )
 
-  (demo.graph/reset)
+  (reset)
   (let [node-dist       [ [0 1 1 1 2 2]
                           [1 0 1 2 3 3]
                           [1 1 0 2 3 3]
@@ -138,7 +148,8 @@
     (is (every? truthy? success))
   )
 
-  (demo.graph/reset)
+  (reset)
+  (add-fraud 0)
   (let [node-dist       [ [0 1 1 1 2 2]
                           [1 0 1 2 3 3]
                           [1 1 0 2 3 3]
@@ -155,7 +166,7 @@
 )
 
 (deftest calc-closeness-t
-  (demo.graph/reset)
+  (reset)
   (let [text  " 0 1
                 1 2"
         -- (load-graph text)
@@ -164,7 +175,7 @@
   ]
     (is (= cness cness-goal)))
 
-  (demo.graph/reset)
+  (reset)
   (add-fraud 0)
   (let [text  " 0 1
                 1 2"
@@ -174,7 +185,7 @@
   ]
     (is (= cness cness-goal)))
 
-  (demo.graph/reset)
+  (reset)
   (let [text  " 0 1 
                 1 2 
                 2 0 
@@ -189,7 +200,7 @@
   ]
     (is (every? truthy? success)))
 
-  (demo.graph/reset)
+  (reset)
   (add-fraud 0)
   (let [text  " 0 1 
                 1 2 
