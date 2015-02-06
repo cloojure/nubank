@@ -119,4 +119,10 @@ We can add a new edge using a URLs like:
 localhost:3000:/add-edge/0/99
 localhost:3000:/add-edge/3/99
 ----
+Note that the node id's are just strings and need not be consecutive numbers.  The string
+id is converted to an internal zero-based index (visible at the /graph URI), and we could
+have even used an id like "***new-node***" if we had wanted instead of "99".  After
+visiting both of the above URLs, return to the /graph URI to see:
+  image:snaps/snap4.png[]
+
 
