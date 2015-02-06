@@ -106,4 +106,10 @@ which should take you to a page like:
 
 This shows a series of map entries describing the graph, where the key (first item) is
 the node index (zero-based) and the value (second item) is a hash-set of the other nodes
-to which the current node is connected.
+to which the current node is connected. We can view the closeness measure for all nodes by
+visiting the URL
+----
+localhost:3000:/closeness
+----
+which displays:
+  image:snaps/snap3.png[]
