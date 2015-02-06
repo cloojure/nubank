@@ -74,13 +74,34 @@ Ran 10 tests containing 87 assertions.
 The last line "0 failures, 0 errors" is the important part.  If something is wrong 
 with your config please shoot me a quick email and we'll resolve it.
 
-
 == Running
 
-To start a web server for the application, execute the following in a spare window:
+To start a web server for the application, execute the following in a spare window
+(the "server window"):
 
     lein ring server
 
-image:http://clojars.org/cooljure/latest-version.svg[ http://clojars.org/cooljure ]
+A new browser tab should pop up looking like this:
 
 image:snaps/snap1.png[]
+
+I've included some test data with a 6-node graph in addition to the full test data
+supplied by NuBank as part of the challenge.  Let's start off with the test data first.
+
+In a spare window (the "command window") line type:
+
+----
+> go-tst.bash 
+----
+
+In the server window you will see that seven edges connecting 6 nodes are added.  At this
+point in your browser, go to the URL
+
+----
+localhost:3000:/graph
+----
+
+which should take you to a page like:
+
+
+image:snaps/snap2.png[]
