@@ -33,8 +33,8 @@
     )))
 
 (defn show-graph []
-  (if (< 0 (count @graph/graph))
-    (let [out     (for [entry @graph/graph]
+  (if (< 0 (count (@graph/state :graph)))
+    (let [out     (for [entry (@graph/state :graph) ]
                     [:h3 (print-str entry) ] )
     ]
       (apply layout/common out)
@@ -55,10 +55,10 @@
   [node]
   (let [node (coolp/parse-int node) ]
     (println "Added Fraud node:" node)
-    (swap! graph/fraud-nodes conj node)
+    (graph/add-fraud node)
     (layout/common 
       [:h1 (str "Added Fraud node:" node)]
-      [:h2 (print-str "All fraud nodes:" @graph/fraud-nodes)]
+      [:h2 (print-str "All fraud nodes:" (@graph/state :fraud-nodes))]
     )))
 
 (defn fraud-nodes 
@@ -66,7 +66,7 @@
   []
   (layout/common 
     [:h1 "All fraud nodes:"]
-    [:h2 (print-str @graph/fraud-nodes) ]
+    [:h2 (print-str (@graph/state :fraud-nodes)) ]
   ))
 
 (defn reset 
@@ -76,16 +76,15 @@
   (layout/common 
     [:h1 "System reset performed"]
     [:h2 (print-str "Nodes:" (count (graph/all-nodes))) ]
-    [:h2 (print-str "Fraud Nodes:" (count @graph/fraud-nodes)) ]
+    [:h2 (print-str "Fraud Nodes:" (count (@graph/state :fraud-nodes))) ]
   ))
 
-
 (defroutes home-routes
-  (GET   "/" [] (home))
-  (GET   "/add-edge/:n1/:n2" [n1 n2] (add-edge n1 n2))
-  (GET   "/closeness" [] (closeness))
-  (GET   "/graph" [] (show-graph))
-  (GET   "/reset" [] (reset))
-  (GET   "/add-fraud/:node" [node] (add-fraud node))
-  (GET   "/fraud-nodes" [] (fraud-nodes))
+  (GET   "/"                    []          (home))
+  (GET   "/add-edge/:n1/:n2"    [n1 n2]     (add-edge n1 n2))
+  (GET   "/closeness"           []          (closeness))
+  (GET   "/graph"               []          (show-graph))
+  (GET   "/reset"               []          (reset))
+  (GET   "/add-fraud/:node"     [node]      (add-fraud node))
+  (GET   "/fraud-nodes"         []          (fraud-nodes))
 )

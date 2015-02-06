@@ -21,7 +21,7 @@
   (add-edge [1 2])
   (is (= { 1 #{2}
            2 #{1} }
-         @graph))
+         (@state :graph)))
   
   (demo.graph/reset)
   (doseq [edge  [[1 2] [2 3]]] 
@@ -29,7 +29,7 @@
   (is (= { 1 #{2}
            2 #{1 3}
            3 #{2} }
-         @graph))
+         (@state :graph)))
 
   (demo.graph/reset)
   (doseq [edge [[1 2] [2 3] [2 4] [3 4] [4 5]]]
@@ -39,7 +39,7 @@
            3 #{2 4}
            4 #{2 3 5}
            5 #{4} }
-         @graph))
+         (@state :graph)))
 )
 
 (deftest symmetry-t
@@ -50,7 +50,7 @@
     (is (= nodes #{1 2 3 4 5}))
     (doseq [node nodes]
       (do
-        (is (contains? @graph node))
+        (is (contains? (@state :graph) node))
         (doseq [nbr (neighbors node)]
           (is (connected? node nbr))
           (is (connected? nbr node))
@@ -101,7 +101,7 @@
 )
 
 (deftest fraud-adjust-t
-  (reset! demo.graph/fraud-nodes #{})
+  (demo.graph/reset)
   (let [node-dist       [ [0 1 2]
                           [1 0 1]
                           [2 1 0] ]
@@ -112,7 +112,7 @@
     (is (= closeness-fraud closeness-goal))
   )
 
-  (reset! demo.graph/fraud-nodes #{0})
+  (demo.graph/reset)
   (let [node-dist       [ [0 1 2]
                           [1 0 1]
                           [2 1 0] ]
@@ -123,7 +123,7 @@
     (is (= closeness-fraud closeness-goal))
   )
 
-  (reset! demo.graph/fraud-nodes #{})
+  (demo.graph/reset)
   (let [node-dist       [ [0 1 1 1 2 2]
                           [1 0 1 2 3 3]
                           [1 1 0 2 3 3]
@@ -138,7 +138,7 @@
     (is (every? truthy? success))
   )
 
-  (reset! demo.graph/fraud-nodes #{0})
+  (demo.graph/reset)
   (let [node-dist       [ [0 1 1 1 2 2]
                           [1 0 1 2 3 3]
                           [1 1 0 2 3 3]
@@ -165,7 +165,7 @@
     (is (= cness cness-goal)))
 
   (demo.graph/reset)
-  (reset! demo.graph/fraud-nodes #{0})
+  (add-fraud 0)
   (let [text  " 0 1
                 1 2"
         -- (load-graph text)
@@ -190,7 +190,7 @@
     (is (every? truthy? success)))
 
   (demo.graph/reset)
-  (reset! demo.graph/fraud-nodes #{0})
+  (add-fraud 0)
   (let [text  " 0 1 
                 1 2 
                 2 0 
