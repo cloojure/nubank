@@ -194,7 +194,7 @@
     closeness   (calc-closeness)
     idx->node   (set/map-invert (@state :node->idx))
     result      (sort-by :closeness > 
-                  (mapv #(hash-map :closeness %1  :node (idx->node %2))
+                  (mapv #(hash-map :closeness %1  :node-id (idx->node %2))
                         closeness 
                         (range (count closeness))))
   ] result ))
