@@ -185,12 +185,9 @@
   (println "calc-closeness")
   (let [
     node-dist       (shortest-path)
-    -- (spyx node-dist)
     farness         (forv [ii  (range (count (all-nodes))) ]
                       (apply + (node-dist ii)))
-    -- (spyx farness)
     closeness-raw   (mapv #(/ 1 %) farness)
-    -- (spyx closeness-raw)
     result          (fraud-adjust closeness-raw node-dist)
   ] result ))
 

@@ -154,5 +154,38 @@ image:snaps/snap8.png[]
 
 and now both node-id's 0 and 9 have a closeness of zero.
 
+If you wish to experiment with your own custom graph, the graph may be reset without
+restarting the server using the URL:
+----
+localhost:3000:/reset
+----
+and you may then use the /add-edge/id-1/id-2 URI to create any graph desired.
+
+Returning to the command window, lets load in the edges for the full NuBank graph:
+----
+> go-full.bash 
+----
+which requires about 10 seconds to run on my computer. You can see the 100 edges scrolling past in the server window, and can view the completed graph at:
+----
+localhost:3000:/graph
+----
+image:snaps/snap9.png[]
+
+and the closeness as:
+image:snaps/snap10.png[]
+
+If we arbitrarily flag node-id 44 (the top node-id) as fraudulent, the closeness changes to:
+image:snaps/snap11.png[]
+
+and we observe that node-id 44 has moved from the top to the bottom of the rankings.
+
+----
+> lein run
+Initializing system state...
+load-graph:  lines read: 945   edges saved: 898
+
+ graph nodes: 100
+----
+
 
 
