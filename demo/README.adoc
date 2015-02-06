@@ -102,6 +102,8 @@ localhost:3000:/graph
 ----
 
 which should take you to a page like:
+  image:snaps/snap2.png[]
 
-
-image:snaps/snap2.png[]
+This shows a series of map entries describing the graph, where the key (first item) is
+the node index (zero-based) and the value (second item) is a hash-set of the other nodes
+to which the current node is connected.
