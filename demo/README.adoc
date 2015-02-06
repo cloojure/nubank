@@ -81,4 +81,6 @@ To start a web server for the application, execute the following in a spare wind
 
     lein ring server
 
+image:http://clojars.org/cooljure/latest-version.svg[ http://clojars.org/cooljure ]
+
 image:https://github.com/cloojure/nubank/blob/master/demo/snaps
