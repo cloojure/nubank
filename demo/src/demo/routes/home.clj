@@ -35,7 +35,7 @@
 (defn show-graph []
   (if (< 0 (count @graph/graph))
     (let [out     (for [entry @graph/graph]
-                    [:p (println-str entry) ] )
+                    [:h3 (print-str entry) ] )
     ]
       (apply layout/common out)
     )
@@ -46,18 +46,20 @@
 
 (defn closeness []
   (apply layout/common 
-    (for [entry (graph/calc-closeness) ]
+    (for [entry (graph/sorted-closeness) ]
       [:h3 (print-str entry) ]
     )))
 
 (defn add-fraud
   "Add a node to the fraudulent list, returning the list"
   [node]
-  (swap! graph/fraud-nodes conj node)
-  (layout/common 
-    [:h1 (str "Added Fraud node:" node)]
-    [:h2 (print-str "All fraud nodes:" @graph/fraud-nodes)]
-  ))
+  (let [node (coolp/parse-int node) ]
+    (println "Added Fraud node:" node)
+    (swap! graph/fraud-nodes conj node)
+    (layout/common 
+      [:h1 (str "Added Fraud node:" node)]
+      [:h2 (print-str "All fraud nodes:" @graph/fraud-nodes)]
+    )))
 
 (defn fraud-nodes 
   "Returns a list of all fraud nodes"

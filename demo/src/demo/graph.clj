@@ -151,7 +151,8 @@
     node-dist   :- array/Array ]
   (into []
     (for [node-idx (range (count closeness))]
-      (let [penalties         (mapv   #(calc-penalty node-dist node-idx %)
+      (let [penalties         
+                (mapv   #(calc-penalty node-dist node-idx %)
                                       @fraud-nodes)
             total-penalty     (apply * penalties)
       ] 
@@ -170,9 +171,9 @@
   (let [
     closeness   (calc-closeness)
     result      (sort-by :closeness > 
-                      (mapv #(hash-map :closeness %1  :node %2)  
-                            closeness 
-                            (range (count closeness))))
+                  (mapv #(hash-map :closeness %1  :node %2)  
+                        closeness 
+                        (range (count closeness))))
   ] result ))
 
 (defn -main []
@@ -187,8 +188,8 @@
                           (mapv count it)
                           (reduce + it)
                           (/ it 2 )))
-
-      closeness-maps  (calc-closeness)
     ]
+      (newline)
+      (println "top nodes by closeness:" (take 20 (sorted-closeness)))
     )))
     
