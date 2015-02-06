@@ -145,9 +145,11 @@ Look at what the addition of a fraud node has done to the closeness caluclation:
 ----
 localhost:3000:/closeness
 ----
+
   image:snaps/snap7.png[]
 
 We see that the fraud node (:node-id 99) has a closeness value of zero.  If we add node 0 to the fraudulent list, we get a different closeness calculation:
+
   image:snaps/snap8.png[]
 
 and now both node-id's 0 and 9 have a closeness of zero.
