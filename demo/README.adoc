@@ -1,0 +1,85 @@
+= NuBank Programming Challenge
+
+This repo contains Clojure code for the NuBank Programming Challenge.  It is a basic
+Ring/Compojure app which includes a number of unit tests and a simple main program.
+
+== Prerequisites
+
+You will need java 1.7+ and Leiningen 2 installed. The code was developed & tested on
+Linux (Ubuntu 14.04) with these versions:
+----
+> lein --version
+Leiningen 2.5.1 on Java 1.8.0_25 Java HotSpot(TM) 64-Bit Server VM
+----
+
+== Testing
+
+Once you clone the repository, make sure you can run lein and execute the unit tests.  You
+should see something like the following:
+----
+> lein deps
+...
+  <many jar's are downloaded>
+...
+> lein test
+Initializing system state...
+
+lein test tst.demo.array
+
+ a34:
+      00      01      02      03
+      10      11      12      13
+      20      21      22      23
+
+lein test tst.demo.darr
+
+darr-test
+
+a34 #1
+     0.0     0.0     0.0     0.0
+     0.0     0.0     0.0     0.0
+     0.0     0.0     0.0     0.0
+
+a34 #2
+    42.0    42.0    42.0    42.0
+    42.0    42.0    42.0    42.0
+    42.0    42.0    42.0    42.0
+
+a34 #3
+     0.0     1.0     2.0     3.0
+    10.0    11.0    12.0    13.0
+    20.0    21.0    22.0    23.0
+
+lein test tst.demo.graph
+load-graph:  lines read: 1   edges saved: 1
+load-graph:  lines read: 1   edges saved: 1
+load-graph:  lines read: 2   edges saved: 2
+load-graph:  lines read: 5   edges saved: 5
+load-graph:  lines read: 2   edges saved: 2
+load-graph:  lines read: 7   edges saved: 7
+load-graph:  lines read: 2   edges saved: 2
+load-graph:  lines read: 2   edges saved: 2
+load-graph:  lines read: 7   edges saved: 7
+load-graph:  lines read: 7   edges saved: 7
+
+lein test tst.demo.handler
+received: (add-edge 3 4 )
+received: (add-edge -1 4 )
+received: (add-edge 1 999 )
+
+Ran 10 tests containing 87 assertions.
+0 failures, 0 errors.
+----
+
+The last line "0 failures, 0 errors" is the important part.  If something is wrong 
+with your config please shoot me a quick email and we'll resolve it.
+
+
+== Running
+
+To start a web server for the application, execute the following in a spare window:
+
+    lein ring server
+
+image:snaps/snap1.png
+

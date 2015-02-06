@@ -7,7 +7,7 @@
   ))
 
 (defn home []
-  (layout/common [:h1 "Hello World!"]))
+  (layout/common [:h1 "Hello NuBank!"]))
 
 (defn add-edge 
   [id-1 id-2]
