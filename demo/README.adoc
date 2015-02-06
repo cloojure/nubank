@@ -102,7 +102,7 @@ localhost:3000:/graph
 ----
 
 which should take you to a page like:
-  image:snaps/snap2.png[]
+image:snaps/snap2.png[]
 
 This shows a series of map entries describing the graph, where the key (first item) is
 the node index (zero-based) and the value (second item) is a hash-set of the other nodes
@@ -112,7 +112,7 @@ visiting the URL
 localhost:3000:/closeness
 ----
 which displays:
-  image:snaps/snap3.png[]
+image:snaps/snap3.png[]
 
 We can add a new edge using a URLs like:
 ----
@@ -123,11 +123,11 @@ Note that the node id's are just strings and need not be consecutive numbers.  T
 id is converted to an internal zero-based index (visible at the /graph URI), and we could
 have even used an id like "***new-node***" if we had wanted instead of "99".  After
 visiting both of the above URLs, return to the /graph URI to see:
-  image:snaps/snap4.png[]
+image:snaps/snap4.png[]
 
 So the new node has index 6 and is connected to node indexes 0 and 3.  We can view the
 closeness of the new graph at the /closeness URI:
-  image:snaps/snap5.png[]
+image:snaps/snap5.png[]
 which is different than before.
 
 If we determine that our new user if fraudulent, we may register so at the URL:
@@ -135,7 +135,7 @@ If we determine that our new user if fraudulent, we may register so at the URL:
 localhost:3000:/add-fraud/99
 ----
 to generate:
-  image:snaps/snap6.png[]
+image:snaps/snap6.png[]
 A current list of all current fraud nodes is always available at the URL
 ----
 localhost:3000:/fraud-nodes
@@ -146,11 +146,11 @@ Look at what the addition of a fraud node has done to the closeness caluclation:
 localhost:3000:/closeness
 ----
 
-  image:snaps/snap7.png[]
+image:snaps/snap7.png[]
 
 We see that the fraud node (:node-id 99) has a closeness value of zero.  If we add node 0 to the fraudulent list, we get a different closeness calculation:
 
-  image:snaps/snap8.png[]
+image:snaps/snap8.png[]
 
 and now both node-id's 0 and 9 have a closeness of zero.
 
