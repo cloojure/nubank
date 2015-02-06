@@ -9,6 +9,23 @@
 
 (use-fixtures :once s-tst/validate-schemas)
 
+(deftest node-idx-t
+  (reset)
+  (is (= 0 (node-idx  0 )))
+  (is (= 1 (node-idx  1 )))
+  (is (= 2 (node-idx "2")))
+  (is (= 3 (node-idx "3")))
+  (is (= 4 (node-idx :x )))
+  (is (= 5 (node-idx :y )))
+
+  (is (= 0 (node-idx  0 )))
+  (is (= 1 (node-idx  1 )))
+  (is (= 2 (node-idx "2")))
+  (is (= 3 (node-idx "3")))
+  (is (= 4 (node-idx :x )))
+  (is (= 5 (node-idx :y )))
+)
+
 (deftest parse-edge-t
   (is (= [1 2]              (parse-edge " 1 2 " )))
   (is (= [123 45]           (parse-edge "123 45" )))

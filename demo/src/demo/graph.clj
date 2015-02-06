@@ -34,9 +34,31 @@
 (def state
   "The current system state"
   (atom { 
+    :node->idx      nil ; map from node id to consecutive array index
     :graph          nil ; the current graph
     :fraud-nodes    nil ; A set of nodes flagged as fraudulent
   } ))
+
+(defn reset 
+  "Reset graph to empty"
+  []
+  (swap! state assoc-in [:node->idx]    (hash-map))
+  (swap! state assoc-in [:graph]        (sorted-map))
+  (swap! state assoc-in [:fraud-nodes]  (sorted-set)))
+(do (println "Initializing system state...")
+    (reset))
+
+(s/defn node-idx :- Node
+  "Returns the array idx for a node-id, assigning a new index if necessary"
+  [node-id :- s/Any]
+  (let [curr-map    (@state :node->idx)
+        idx         (get curr-map node-id :fail) ]
+    (if (not= :fail idx)
+      idx ; found it
+      ;else assign a new idx
+      (let [new-idx (count curr-map) ] ; zero-based idx
+        (swap! state update-in [:node->idx] conj {node-id new-idx})
+        new-idx))))
 
 (s/defn get-graph :- Graph
   "Returns the current graph"
@@ -51,14 +73,6 @@
 (s/defn add-fraud :- nil
   [node :- Node]
   (swap! state update-in [:fraud-nodes] conj node))
-
-(defn reset 
-  "Reset graph to empty"
-  []
-  (swap! state assoc-in [:graph]        (sorted-map))
-  (swap! state assoc-in [:fraud-nodes]  (sorted-set)))
-(do (println "Initializing system state...")
-    (reset))
 
 (s/defn num-edges :- s/Int
   "Returns the number of (symmetric) edges in the graph"
