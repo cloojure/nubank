@@ -125,4 +125,7 @@ have even used an id like "***new-node***" if we had wanted instead of "99".  Af
 visiting both of the above URLs, return to the /graph URI to see:
   image:snaps/snap4.png[]
 
+So the new node has index 6 and is connected to node indexes 0 and 3.  We can view the
+closeness of the new graph at the /closeness URI:
+  image:snaps/snap5.png[]
 
