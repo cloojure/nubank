@@ -63,10 +63,17 @@
   []
   (@state :graph))
 
-(s/defn get-fraud-nodes :- #{Node}
+(s/defn get-fraud-nodes :- #{s/Str}
   "Returns a list of fraud nodes."
   []
-  (@state :fraud-nodes))
+  (newline)
+  (println "get-fraud-nodes")
+  (let [idx->node       (set/map-invert (@state :node->idx))
+        idxs            (@state :fraud-nodes) 
+        result          (into (sorted-set) (mapv idx->node idxs))
+  ]
+    result
+  ))
 
 (s/defn add-fraud :- nil
   [node :- s/Str]

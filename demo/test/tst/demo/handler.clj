@@ -8,7 +8,7 @@
   (testing "main route"
     (let [response (app (request :get "/"))]
       (is (= (:status response) 200))
-      (is (.contains (:body response) "Hello World"))))
+      (is (.contains (:body response) "Hello NuBank"))))
 
   (testing "add-edge good"
     (let [response (app (request :get "/add-edge/3/4"))]

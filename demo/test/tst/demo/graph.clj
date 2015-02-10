@@ -75,7 +75,7 @@
 
   (add-fraud "0")
   (add-fraud "99")
-  (is (= #{0 99} (get-fraud-nodes)))
+  (is (= #{"0" "99"} (get-fraud-nodes)))
 )
 
 (deftest shortest-path-t
