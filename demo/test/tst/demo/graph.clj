@@ -73,8 +73,8 @@
   (reset)
   (is (= #{} (get-fraud-nodes)))
 
-  (add-fraud 0)
-  (add-fraud 99)
+  (add-fraud "0")
+  (add-fraud "99")
   (is (= #{0 99} (get-fraud-nodes)))
 )
 
@@ -135,7 +135,7 @@
   )
 
   (reset)
-  (add-fraud 0)
+  (add-fraud "0")
   (let [node-dist       [ [0 1 2]
                           [1 0 1]
                           [2 1 0] ]
@@ -162,7 +162,7 @@
   )
 
   (reset)
-  (add-fraud 0)
+  (add-fraud "0")
   (let [node-dist       [ [0 1 1 1 2 2]
                           [1 0 1 2 3 3]
                           [1 1 0 2 3 3]
@@ -189,7 +189,7 @@
     (is (= cness cness-goal)))
 
   (reset)
-  (add-fraud 0)
+  (add-fraud "0")
   (let [text  " 0 1
                 1 2"
         -- (load-graph text)
@@ -214,7 +214,7 @@
     (is (every? truthy? success)))
 
   (reset)
-  (add-fraud 0)
+  (add-fraud "0")
   (let [text  " 0 1 
                 1 2 
                 2 0 

@@ -2,13 +2,14 @@
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :dependencies [
-    [org.clojure/clojure        "1.6.0"]
-    [cooljure                   "0.1.21"]
-    [prismatic/schema           "0.3.3"]
-    [prismatic/hiphip           "0.2.0"]
-    [compojure                  "1.1.6"]
-    [hiccup                     "1.0.5"]
-    [ring-server                "0.3.1"]
+    [org.clojure/clojure            "1.6.0"]
+    [cooljure                       "0.1.21"]
+    [prismatic/schema               "0.3.3"]
+    [prismatic/hiphip               "0.2.0"]
+    [org.clojure/tools.namespace    "0.2.9"]
+    [compojure                      "1.1.6"]
+    [hiccup                         "1.0.5"]
+    [ring-server                    "0.3.1"]
   ]
   :plugins [[lein-ring "0.8.12"]]
   :ring {:handler   demo.handler/app
