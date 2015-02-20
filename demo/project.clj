@@ -3,7 +3,7 @@
   :url "http://example.com/FIXME"
   :dependencies [
     [org.clojure/clojure            "1.6.0"]
-    [cooljure                       "0.1.21"]
+    [cooljure                       "0.1.22"]
     [prismatic/schema               "0.3.3"]
     [prismatic/hiphip               "0.2.0"]
     [org.clojure/tools.namespace    "0.2.9"]
