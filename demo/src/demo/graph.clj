@@ -136,11 +136,11 @@
                 (count file-lines) (num-edges)))
   ))
 
-(s/defn shortest-path :- array/Array
+(s/defn shortest-path-mut :- array/Array
   "Calculates the shortest-path betwen each pair of Nodes"
   []
   (let [N       (count (all-nodes))
-        dist    (darr/create N N 1e99)
+        dist    (darr/create N N 1e9)
   ]
     (doseq [ ii (range N) ]
       (darr/set-elem dist ii ii 0))
@@ -162,16 +162,17 @@
     (let [result-array
             (into [] (for [ii (range N)]
               (into [] (for [jj (range N)]
-                (int (darr/get-elem dist ii jj))))))
+                (long (darr/get-elem dist ii jj))))))
     ] result-array )))
 
 (s/defn edge-cost :- s/Num
   "Returns the cost of going directly from node ii -> jj along an edge"
-  [ii jj]
+  [ ii :- Node
+    jj :- Node ]
   (cond 
     (= ii jj)     0
     (any?         (neighbors ii) jj)
-    :else         1e99))
+    :else         (long 1e9)))
 
 (s/defn shortest-path-fn-3 :- s/Num
   "Return the shortest path between 2 nodes, using only nodes <= kk as intermediaries"
@@ -196,6 +197,10 @@
               (int (shortest-path-fn-3 ii jj N))))))
   ] result-array ))
 
+(s/defn shortest-path :- array/Array
+  "Calculates the shortest-path betwen each pair of Nodes"
+  []
+  (shortest-path-mut))
 
 (s/defn calc-penalty :- s/Num
   "Calculate the closeness score penalty for 2 nodes."
