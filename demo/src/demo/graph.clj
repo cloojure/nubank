@@ -165,6 +165,38 @@
                 (int (darr/get-elem dist ii jj))))))
     ] result-array )))
 
+(s/defn edge-cost :- s/Num
+  "Returns the cost of going directly from node ii -> jj along an edge"
+  [ii jj]
+  (cond 
+    (= ii jj)     0
+    (any?         (neighbors ii) jj)
+    :else         1e99))
+
+(s/defn shortest-path-fn-3 :- s/Num
+  "Return the shortest path between 2 nodes, using only nodes <= kk as intermediaries"
+  [ ii :- Node
+    jj :- Node
+    kk :- Node ]
+  (if (neg? kk)
+    (edge-cost ii jj)
+    (let [kk-dec (dec kk)]
+      (min (shortest-path-fn-3    ii jj kk-dec)
+           (+ (shortest-path-fn-3 ii kk kk-dec)
+              (shortest-path-fn-3 kk jj kk-dec)))))
+
+(s/defn shortest-path-fn-2 :- s/Num
+  "Return the shortest path between 2 nodes"
+  [ ii :- Node
+    jj :- Node ]
+  (let [N       (count (all-nodes))
+        result-array
+          (into [] (for [ii (range N)]
+            (into [] (for [jj (range N)]
+              (int (shortest-path-fn-3 ii jj N))))))
+  ] result-array ))
+
+
 (s/defn calc-penalty :- s/Num
   "Calculate the closeness score penalty for 2 nodes."
   [ node-dist   :- array/Array
